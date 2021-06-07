@@ -1,0 +1,344 @@
+﻿@model dynamic 
+@{
+    Layout = "";
+    ViewData["Title"] = "Register";
+}
+<!DOCTYPE html>
+<html lang="EN-nz">
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Whipped Management Systems - Admin Portal</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="~/assets/img/WhippedLogo.png" rel="Logo">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Roboto:100,300,400,500,700|Philosopher:400,400i,700,700i" rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="~/css/secured.css" rel="stylesheet">
+    <link href="~/css/header-footer.css" rel="stylesheet">
+
+    <!-- =======================================================
+    * Template Name: eStartup - v4.2.0
+    * Template URL: https://bootstrapmade.com/estartup-bootstrap-landing-page-template/
+    * Author: BootstrapMade.com
+    * License: https://bootstrapmade.com/license/
+    ======================================================== -->
+</head>
+<body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <div id="logo">
+                <h1><a href="index.html"><img src="~/assets/img/WhippedLogo.png" height="65" width="65"></a></h1>
+                <!-- <h1><a href="index.html"><span>Whipped</span>MS</a></h1> -->
+                <!-- Uncomment below if you prefer to use an image logo -->
+                <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" title="" /></a>-->
+            </div>
+            <div class="page-title"><a>Admin Portal</a></div>
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a class="nav-link" href="/">Home</a></li>
+                    <li><a class="nav-link active">Admin</a></li>
+                    <li><a class="nav-link" asp-action="Logout">Logout</a></li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav><!-- .navbar -->
+
+        </div>
+    </header><!-- End Header -->
+    <div class="main">
+        <div class="main-container">
+            <div class="registered-container student" id="container_one">
+                <div class="user-type">
+                    <ul>
+                        <li id="created_students" style="background-color: #B7DCF4; font-weight: 700;" onclick="regStudents()">Student</li>
+                        <li id="created_teachers" style="background-color: #FFB7B2;" onclick="regTeachers()">Teacher</li>
+                        <li style="margin-left: 20px;"><a id="registered_title">Registered Students</a></li>
+                    </ul>
+                </div>
+                <!--Student List Table-->
+                <div class="row" id="student_list">
+                    <div class="col-sm-12">
+                        <div class="panel pane-default">
+                            <div class="panel-body">
+                                <table class="table table-striped flex-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="flex-id">ID</th>
+                                            <th class="flex-first">First Name</th>
+                                            <th class="flex-last">Last Name</th>
+                                            <th class="flex-email">Email</th>
+                                            <th class="flex-class">Class</th>
+                                            <th class="flex-edit" style="cursor: default;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (Model != null)
+                                            {
+                                                foreach (Student student in Model.Students)
+                                                {
+                                                    <tr>
+                                                        <td class="flex-id">@student.Id</td>
+                                                        <td class="flex-first">@student.First_Name</td>
+                                                        <td class="flex-last">@student.Last_Name</td>
+                                                        <td class="flex-email">@student.Email</td>
+                                                        <td class="flex-class">@student.Class</td>
+                                                        <td class="flex-edit style" style="flex: 1 !important;" onclick="editStudent('@student.Id', '@student.First_Name', '@student.Last_Name', '@student.Email', '@student.Class', '@student.Phone', '@student.DOB', '@student.Ethnicity', '@student.Timetable');">
+                                                            <a>
+                                                                Edit
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Teacher List Table-->
+                <div class="row" id="teacher_list" style="display: none;">
+                    <div class="col-sm-12">
+                        <div class="panel pane-default">
+                            <div class="panel-body">
+                                <table class="table table-striped flex-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="flex-id">ID</th>
+                                            <th class="flex-first">First Name</th>
+                                            <th class="flex-last">Last Name</th>
+                                            <th class="flex-email">Email</th>
+                                            <th class="flex-class">Teaches</th>
+                                            <th class="flex-edit"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (Model != null)
+                                            {
+                                                foreach (Teacher teacher in Model.Teachers)
+                                                {
+                                                    <tr>
+                                                        <td class="flex-id">@teacher.Id</td>
+                                                        <td class="flex-first">@teacher.First_Name</td>
+                                                        <td class="flex-last">@teacher.Last_Name</td>
+                                                        <td class="flex-email">@teacher.Email</td>
+                                                        <td class="flex-class">@teacher.Class</td>
+                                                        <td class="flex-edit style" style="flex: 1 !important;" onclick="editTeacher('@teacher.Id', '@teacher.First_Name', '@teacher.Last_Name', '@teacher.Email', '@teacher.Class', '@teacher.Timetable')">
+                                                            <a>
+                                                                Edit
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--User Create Forms-->
+            <div class="create-container student" id="container_two">
+                <div class="user-type">
+                    <ul>
+                        <li id="reg_student" style="background-color: #B7DCF4; font-weight: 700;" onclick="createStudent()">Student</li>
+                        <li id="reg_teacher" style="background-color: #FFB7B2;" onclick="createTeacher()">Teacher</li>
+                        <li style="margin-left:75px;"><a id="form_title">Create Student</a></li>
+                    </ul>
+                </div>
+                <!--Student Create Form-->
+                <form id="student_form" enctype="multipart/form-data" method="post">
+                    First Name: <input class="input" type="text" name="stud_first_name" placeholder="First Name" required /><br /><br />
+                    Last Name: <input class="input" type="text" name="stud_last_name" placeholder="Last Name" required /><br /><br />
+                    Email: <input class="input" type="email" name="stud_email" placeholder="Email" required /><br /><br />
+                    Class: <select class="input" name="stud_class" required>
+                        <option value="Information Systems">Information Systems</option>
+                        <option value="ITTS">ITTS</option>
+                        <option value="Systems Administration">Systems Administration</option>
+                        <option value="Software Development">Software Development</option>
+                        <option value="Cloud Management">Cloud Management</option>
+                    </select><br /><br />
+                    Phone Number: <input class="input" type="tel" name="stud_phone" placeholder="Phone Number" required /><br /><br />
+                    D.O.B: <input class="input" type="date" name="stud_dob" placeholder="Date of Birth" required /><br /><br />
+                    Ethnicity: <select class="input" name="stud_ethnicity" required>
+                        <option value="European">European</option>
+                        <option value="Moari">Moari</option>
+                        <option value="Asain">Asain</option>
+                        <option value="Pacific">Pacific</option>
+                        <option value="MELAA">MELAA</option>
+                    </select><br /><br />
+                    Timetable: <input id="stud_timetable" class="input" type="file" name="stud_timetable" /><br />
+                    <input class="form-btn" type="submit" asp-action="RegisterStudent" value="Create User" />
+                    <input class="form-btn" type="reset" value="Reset" />
+                </form>
+                <!--Teacher Create Form-->
+                <form id="teacher_form" style="display: none;" enctype="multipart/form-data" method="post">
+                    First Name: <input class="input" type="text" name="teach_first_name" placeholder="First Name" required /><br /><br />
+                    Last Name: <input class="input" type="text" name="teach_last_name" placeholder="Last Name" required /><br /><br />
+                    Email: <input class="input" type="email" name="teach_email" placeholder="Email" required /><br /><br />
+                    Class: <select class="input" name="teach_class" required>
+                        <option value="Information Systems">Information Systems</option>
+                        <option value="ITTS">ITTS</option>
+                        <option value="Systems Administration">Systems Administration</option>
+                        <option value="Software Development">Software Development</option>
+                        <option value="Cloud Management">Cloud Management</option>
+                    </select><br /><br />
+                    Timetable: <input id="teach_timetable" class="input" type="file" name="teach_timetable" /><br /><br />
+                    <input class="form-btn" type="submit" asp-action="RegisterTeacher" value="Add User" />
+                    <input class="form-btn" type="reset" value="Reset" />
+                </form>
+
+
+
+                <!--EDIT FORMS------------>
+                <!--Student-->
+                <form id="student_form_edit" style="display: none" enctype="multipart/form-data" method="post">
+                    ID: <input id="edit_stud_id" class="input" type="text" name="edit_stud_id" readonly /><br /><br />
+                    First Name: <input id="edit_stud_first_name" class="input" type="text" name="update_stud_first_name" placeholder="First Name" required /><br /><br />
+                    Last Name: <input id="edit_stud_last_name" class="input" type="text" name="update_stud_last_name" placeholder="Last Name" required /><br /><br />
+                    Email: <input id="edit_stud_email" class="input" type="email" name="update_stud_email" placeholder="Email" required /><br /><br />
+                    Class: <select id="edit_stud_class" class="input" name="update_stud_class" required>
+                        <option value="Information Systems">Information Systems</option>
+                        <option value="ITTS">ITTS</option>
+                        <option value="Systems Administration">Systems Administration</option>
+                        <option value="Software Development">Software Development</option>
+                        <option value="Cloud Management">Cloud Management</option>
+                    </select><br /><br />
+                    Phone Number: <input id="edit_stud_phone" class="input" type="tel" name="update_stud_phone" placeholder="Phone Number" required /><br /><br />
+                    D.O.B: <input id="edit_stud_dob" class="input" type="date" name="update_stud_dob" placeholder="Date of Birth" required /><br /><br />
+                    Ethnicity: <select id="edit_stud_ethnicity" class="input" name="update_stud_ethnicity" required>
+                        <option value="European">European</option>
+                        <option value="Moari">Moari</option>
+                        <option value="Asain">Asain</option>
+                        <option value="Pacific">Pacific</option>
+                        <option value="MELAA">MELAA</option>
+                    </select><br /><br />
+                    Timetable: <input id="edit_stud_timetable" class="input" type="file" name="update_stud_timetable"/><br />
+                    File:<input id="uploaded_stud_timetable" class="input" name="uploaded_stud_timetable" readonly /><br /><br />
+                    <input class="form-btn" type="submit" asp-action="UpdateStudentDetails" value="Save Edit" />
+                    <input class="form-btn cancel" type="reset" value="Cancel" onclick="cancelEdit()" />
+                    <input class="form-btn" type="submit" asp-action="DeleteStudent" value="Delete" />
+                    <input class="form-btn" type="reset" value="Reset" />
+                </form>
+                <!--Teacher-->
+                <form id="teacher_form_edit" style="display: none;" enctype="multipart/form-data" method="post">
+                    ID: <input id="edit_teach_id" class="input" type="text" name="edit_teach_id" readonly /><br /><br />
+                    First Name: <input id="edit_teach_first_name" class="input" type="text" name="update_teach_first_name" placeholder="First Name" required /><br /><br />
+                    Last Name: <input id="edit_teach_last_name" class="input" type="text" name="update_teach_last_name" placeholder="Last Name" required /><br /><br />
+                    Email: <input id="edit_teach_email" class="input" type="email" name="update_teach_email" placeholder="Email" required /><br /><br />
+                    Class: <select id="edit_teach_class" class="input" name="update_teach_class" required>
+                        <option value="Information Systems">Information Systems</option>
+                        <option value="ITTS">ITTS</option>
+                        <option value="Systems Administration">Systems Administration</option>
+                        <option value="Software Development">Software Development</option>
+                        <option value="Cloud Management">Cloud Management</option>
+                    </select><br /><br />
+                    Timetable: <input id="edit_teach_timetable" class="input" type="file" name="update_teach_timetable"/><br />
+                    File:<input id="uploaded_teach_timetable" class="input" name="uploaded_teach_timetable" readonly/><br/><br/>
+                    <input class="form-btn" type="submit" asp-action="UpdateTeacherDetails" value="Save Edit" />
+                    <input class="form-btn cancel" type="reset" value="Cancel" onclick="cancelEdit()" />
+                    <input class="form-btn" type="submit" asp-action="DeleteTeacher" value="Delete" />
+                    <input class="form-btn" type="reset" value="Reset" />
+                </form>
+            </div>
+        </div>
+    </div><!-- End #main -->
+    <!-- ======= Footer ======= -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-12 col-lg-4">
+                    <div class="footer-logo">
+
+                        <a class="navbar-brand" href="#">WhippedMS</a>
+                        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the.</p>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <div class="list-menu">
+
+                        <h4>About Us</h4>
+
+                        <ul class="list-unstyled">
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">Features item</a></li>
+                            <li><a href="#">Live streaming</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <div class="list-menu">
+
+                        <h4>Support</h4>
+
+                        <ul class="list-unstyled">
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">Features item</a></li>
+                            <li><a href="#">Live streaming</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <div class="list-menu">
+
+                        <h4>Contact</h4>
+
+                        <ul class="list-unstyled">
+                            <li><a href="#">faq</a></li>
+                            <li><a href="#">Editor help</a></li>
+                            <li><a href="#">Contact us</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-md-3 col-lg-2">
+                    <div class="list-menu">
+
+                        <h4>FAQs</h4>
+
+                        <ul class="list-unstyled">
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">Features item</a></li>
+                            <li><a href="#">Live streaming</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </footer><!-- End  Footer -->
+
+    <!--Register and Create-->
+    <script src="~/js/secured.js"></script>
+
+</body>
+</html>

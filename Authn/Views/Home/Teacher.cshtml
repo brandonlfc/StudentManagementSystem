@@ -1,0 +1,448 @@
+﻿@model dynamic
+@{
+    Layout = "";
+
+    foreach(TeacherSubmitted item in Model.Submitted)
+    {
+
+    }
+}
+<!DOCTYPE html>
+<html lang="en-nz">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <title>Whipped Management Systems - Teacher Portal</title>
+        <meta content="" name="description">
+        <meta content="" name="keywords">
+
+        <!-- Favicons -->
+        <link href="~/assets/img/WhippedLogo.png" rel="Logo">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Roboto:100,300,400,500,700|Philosopher:400,400i,700,700i" rel="stylesheet">
+
+        <!-- Vendor CSS Files -->
+        <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Main CSS File -->
+        <link href="~/css/teacher.css" rel="stylesheet">
+        <link href="~/css/header-footer.css" rel="stylesheet">
+
+        <!-- =======================================================
+        * Template Name: eStartup - v4.2.0
+        * Template URL: https://bootstrapmade.com/estartup-bootstrap-landing-page-template/
+        * Author: BootstrapMade.com
+        * License: https://bootstrapmade.com/license/
+        ======================================================== -->
+    </head>
+    <body>
+        <!-- ======= Header ======= -->
+        <header id="header" class="header fixed-top d-flex align-items-center">
+            <div class="container d-flex align-items-center justify-content-between">
+
+                <div id="logo">
+                    <h1><a href="index.html"><img src="~/assets/img/WhippedLogo.png" height="65" width="65"></a></h1>
+                    <!-- <h1><a href="index.html"><span>Whipped</span>MS</a></h1> -->
+                    <!-- Uncomment below if you prefer to use an image logo -->
+                    <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" title="" /></a>-->
+                </div>
+                <div class="page-title"><a>Teacher Portal</a></div>
+                <nav id="navbar" class="navbar">
+                    <ul>
+                        <li><a class="nav-link" href="/">Home</a></li>
+                        <li><a class="nav-link active" id="teacher" onclick="showTeacher()">Teacher</a></li>
+                        <li><a class="nav-link" id="attendance" onclick="showAttendance()">Attendance</a></li>
+                        <li><a class="nav-link" id="attitude" onclick="showAttitude()">Attitude</a></li>
+                        <li><a class="nav-link" id="achievement" onclick="showAchievement()">Achievement</a></li>
+                        <li><a class="nav-link" asp-action="Logout">Logout</a></li>
+                    </ul>
+                    <i class="bi bi-list mobile-nav-toggle"></i>
+                </nav><!-- .navbar -->
+
+            </div>
+        </header><!-- End Header -->
+        <div class="main" id="main">
+            @{
+                if (Model != null)
+                {
+                    foreach (Teacher teacher in Model.Teachers)
+                    {
+                        <div class="button-timetable" id="timetable_button" onclick="showTimetable()">
+                            <a>Timetable</a>
+                        </div>
+                        <div id="timetable_display" class="modal" style="display: none;">
+                            <div class="modal-content">
+                                <span class="close" onclick="hideTimetable()">&times;</span>
+                                <img class="img" src="@Url.Content("~/timetables/teachers/" + @teacher.Timetable)" />
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+        <div class="main-container" id="main-container">
+            <div class="list-container students" id="container_one">
+                <div class="user-type">
+                    <ul id="class-list">
+                        <li><a>Class List</a></li>
+                    </ul>
+                </div>
+                <div class="row" id="list_students">
+                    <div class="col-sm-12">
+                        <div class="panel pane-default">
+                            <div class="panel-body">
+                                <table class="table table-striped flex-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="flex-id">ID</th>
+                                            <th class="flex-first">First Name</th>
+                                            <th class="flex-last">Last Name</th>
+                                            <th class="flex-email">Email</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (Model != null)
+                                            {
+                                                foreach (Student student in Model.Students)
+                                                {
+                                                    <tr>
+                                                        <td class="flex-id">@student.Id</td>
+                                                        <td class="flex-first">@student.First_Name</td>
+                                                        <td class="flex-last">@student.Last_Name</td>
+                                                        <td class="flex-email">@student.Email</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="create-container create-assignment" id="container_two">
+                <div class="user-type">
+                    <ul>
+                        <li class="view-buttons" id="create_assignments" style="background-color: #B7DCF4; font-weight: 700;" onclick="createAssignments()">Create</li>
+                        <li class="view-buttons" id="view_assignments" style="background-color: #FFB7B2;" onclick="viewAssignments()">View</li>
+                        <li><a id="form_title" style="margin-left:75px;">Create Assignment</a></li>
+                    </ul>
+                </div>
+                <form id="create_form">
+                    Class: <input class="input" name="displayClass" placeholder="@{ foreach (Teacher teacher in Model.Teachers) { @teacher.Class} }" readonly /><br /><br />
+                    Start Date: <input class="input" type="date" name="createStartDate" placeholder="Start Date" required /><br /><br />
+                    End Date: <input class="input" type="date" name="createEndDate" placeholder="End Date" required /><br /><br />
+                    Details: <textarea class="input assignment-details" name="createDetails" placeholder="Enter assignment details"></textarea><br /><br />
+                    <div class="buttons">
+                        <input class="form-btn" type="submit" asp-action="CreateAssignment" value="Create" />
+                        <input class="form-btn" type="reset" value="Reset" />
+                    </div>
+                </form>
+                <div class="row" id="list_assignment" style="display: none;">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <table class="table table-striped flex-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="flex-ass-id">ID</th>
+                                            <th class="flex-ass-start">Start Date</th>
+                                            <th class="flex-ass-end">End Date</th>
+                                            <th class="flex-ass-details">Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (Model != null)
+                                            {
+                                                foreach (Assignment assignment in Model.Assignments)
+                                                {
+                                                    <tr id="@assignment.AssignmentID">
+                                                        <td class="flex-ass-id">@assignment.AssignmentID</td>
+                                                        <td class="flex-ass-start">@assignment.Start_Date</td>
+                                                        <td class="flex-ass-end">@assignment.End_Date</td>
+                                                        <td class="flex-ass-details">@assignment.Details</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--ATTENDANCE FORM-->
+        <div class="attendance-container" id="attendance-container" style="display: none;">
+            <div class="list-container students" id="container_three">
+                <div class="user-type">
+                    <ul id="class-list">
+                        <li><a>Attendance List</a></li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel pane-default">
+                            <div class="panel-body">
+                                <form style="margin-top: 0;" enctype="multipart/form-data" method="post">
+                                    <table class="table table-stripped flex-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>Attendance</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="scrollbar-width: none;">
+                                            @{
+                                                if (Model != null)
+                                                {
+                                                    foreach (Student student in Model.Students)
+                                                    {
+                                                        <tr>
+                                                            <td style="width: 175px;">
+                                                                <input style="border: none; text-align: center;" name="StudentID[]" value="@student.Id" readonly />
+                                                            </td>
+                                                            <td>@student.First_Name</td>
+                                                            <td>@student.Last_Name</td>
+                                                            <td>
+                                                                <select name="Attendance[]" style="border:1px solid lightgray;" required>
+                                                                    <option value="" default selected></option>
+                                                                    <option value="Present">Present</option>
+                                                                    <option value="Absent">Absent</option>
+                                                                    <option value="Late">Late</option>
+                                                                </select>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                            <tr>
+                                                <td><input type="date" name="Date" id="attendance_date" required readonly></td>
+                                                <td><input type="submit" asp-action="SubmitAttendance" value="Save" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--ATTITUDE FORM-->
+        <div class="attitude-container" id="attitude-container" style="display: none;">
+            <div class="list-container students" id="container_four">
+                <div class="user-type">
+                    <ul id="class-list">
+                        <li><a>Attitude List</a></li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel pane-default">
+                            <div class="panel-body">
+                                <form style="margin-top: 0;" enctype="multipart/form-data" method="post">
+                                    <table class="table table-stripped flex-table">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>Attitude</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody style="scrollbar-width: none;">
+                                            @{
+                                                if (Model != null)
+                                                {
+                                                    foreach (Student student in Model.Students)
+                                                    {
+                                                        <tr>
+                                                            <td style="width: 175px;">
+                                                                <input style="border: none; text-align: center;" name="StudentID[]" value="@student.Id" readonly />
+                                                            </td>
+                                                            <td>@student.First_Name</td>
+                                                            <td>@student.Last_Name</td>
+                                                            <td>
+                                                                <input type="number" class="set-attitude" name="attitude" min="0" max="100" required />
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            }
+                                            <tr>
+                                                <td><input type="date" name="Date" id="attitude_date" required readonly></td>
+                                                <td><input type="submit" asp-action="SubmitAttitude" value="Save" /></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--ACHIEVEMENT FORM-->
+        <div class="achievement-container" id="achievement-container" style="display: none;">
+            <div class="list-container students" id="container_five">
+                <div class="user-type">
+                    <ul id="class-list">
+                        <li><a>Achievement List</a></li>
+                    </ul>
+                </div>
+                <div class="row" id="list_achievement">
+                    <div class="col-sm-12">
+                        <div class="panel pane-default">
+                            <div class="panel-body">
+                                <table class="table table-striped flex-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="flex-ach-studid">StudentID</th>
+                                            <th class="flex-ach-assid">AssignmentID</th>
+                                            <th class="flex-ach-details">Details</th>
+                                            <th class="flex-ach-edit"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (Model != null)
+                                            {
+                                                foreach (TeacherSubmitted item in Model.Submitted)
+                                                {
+                                                    <tr>
+                                                        <td class="flex-ach-studid">@item.StudentID</td>
+                                                        <td class="flex-ach-assid">@item.AssignmentID</td>
+                                                        <td class="flex-ach-details">@item.Details</td>
+                                                        <td class="flex-ach-edit style" onclick="gradeAssignment('@item.StudentID', '@item.AssignmentID', '@item.Name', '@item.Details', '@item.Class')">
+                                                            <a>
+                                                                Edit
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--VIEW ASSIGNMENT DETAILS-->
+        <div class="grade-container" id="grade-container" style="display: none;">
+            <div class="list-container students" id="container_six">
+                <div class="user-type">
+                    <ul id="class-list">
+                        <li><a>Grade Assignment</a></li>
+                    </ul>
+                </div>
+                <form id="grade_form" enctype="multipart/form-data" method="post">
+                    Student ID: <input class="input" id="grade-studid" type="text" name="StudentID" readonly/><br /><br />
+                    Assignment ID: <input class="input" id="grade-assid" type="text" name="AssignmentID" readonly/><br /><br />
+                    Details: <textarea class="input assignment-details" id="grade-details" name="assignmentDetails" readonly></textarea><br /><br />
+                    <div class="pdf">
+                        <a id="pdf" href="" target="_blank" rel="noopener noreferrer" >View Assignment PDF</a>
+                        <input class="input" name="Grade" type="number" min="0.0" max="100.0" step="any" placeholder="Enter Grade Here" required/><br/><br/>
+                    </div>
+                    <div style="margin-top: 100px;">
+                        <input class="form-btn" type="submit" asp-action="GradeAssignment" value="Grade" />
+                        <input class="form-btn" type="reset" value="Cancel" onclick="Cancel()"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- End #main -->
+        <!-- ======= Footer ======= -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-md-12 col-lg-4">
+                        <div class="footer-logo">
+
+                            <a class="navbar-brand" href="#">WhippedMS</a>
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the.</p>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-2">
+                        <div class="list-menu">
+
+                            <h4>About Us</h4>
+
+                            <ul class="list-unstyled">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Features item</a></li>
+                                <li><a href="#">Live streaming</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-2">
+                        <div class="list-menu">
+
+                            <h4>Support</h4>
+
+                            <ul class="list-unstyled">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Features item</a></li>
+                                <li><a href="#">Live streaming</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-2">
+                        <div class="list-menu">
+
+                            <h4>Contact</h4>
+
+                            <ul class="list-unstyled">
+                                <li><a href="#">faq</a></li>
+                                <li><a href="#">Editor help</a></li>
+                                <li><a href="#">Contact us</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-2">
+                        <div class="list-menu">
+
+                            <h4>FAQs</h4>
+
+                            <ul class="list-unstyled">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Features item</a></li>
+                                <li><a href="#">Live streaming</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer><!-- End  Footer -->
+        <script src="~/js/teacher.js"></script>
+    </body>
+</html>

@@ -1,0 +1,299 @@
+﻿@model dynamic
+@{
+    Layout = "";
+
+    float atten = 0;
+    int i = 0;
+    foreach (StatsAttendance item in Model.Attendance)
+    {
+        atten += item.Attendance;
+        i++;
+    }
+    float attendanceTotal = ((atten / i) / 240) * 100;
+    string AttendanceText = String.Format("Attendance - {0:0.0}%", attendanceTotal);
+
+    float attit = 0;
+    int e = 0;
+    foreach (StatsAttitude item in Model.Attitude)
+    {
+        attit += item.Attitude;
+        e++;
+    }
+    float attitudeTotal = attit / e;
+    string AttitudeText = String.Format("Attitude - {0:0.0}%", attitudeTotal);
+
+    float achievement = 0;
+    int o = 0;
+    foreach(StatsAchievement item in Model.Achievement)
+    {
+        achievement += item.Achievement;
+        o++;
+    }
+    float achievementTotal = achievement / e;
+    string AchievementText = String.Format("Achievement - {0:0.0}%", achievementTotal);
+}
+<!DOCTYPE html>
+<html lang="en-nz">
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <title>Whipped Management Systems - Teacher Portal</title>
+        <meta content="" name="description">
+        <meta content="" name="keywords">
+
+        <!-- Favicons -->
+        <link href="~/assets/img/WhippedLogo.png" rel="Logo">
+
+        <!-- Google Fonts -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Roboto:100,300,400,500,700|Philosopher:400,400i,700,700i" rel="stylesheet">
+
+        <!-- Vendor CSS Files -->
+        <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Main CSS File -->
+        <link href="~/css/student.css" rel="stylesheet">
+        <link href="~/css/header-footer.css" rel="stylesheet">
+
+        <!-- =======================================================
+        * Template Name: eStartup - v4.2.0
+        * Template URL: https://bootstrapmade.com/estartup-bootstrap-landing-page-template/
+        * Author: BootstrapMade.com
+        * License: https://bootstrapmade.com/license/
+        ======================================================== -->
+    </head>
+    <body>
+        <!-- ======= Header ======= -->
+        <header id="header" class="header fixed-top d-flex align-items-center">
+            <div class="container d-flex align-items-center justify-content-between">
+
+                <div id="logo">
+                    <h1><a href="index.html"><img src="~/assets/img/WhippedLogo.png" height="65" width="65"></a></h1>
+                    <!-- <h1><a href="index.html"><span>Whipped</span>MS</a></h1> -->
+                    <!-- Uncomment below if you prefer to use an image logo -->
+                    <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" title="" /></a>-->
+                </div>
+                <div class="page-title"><a>Student Portal</a></div>
+                <nav id="navbar" class="navbar">
+                    <ul>
+                        <li><a class="nav-link" href="/">Home</a></li>
+                        <li><a class="nav-link" asp-action="Logout">Logout</a></li>
+                        <div class="stats">
+                            <ul>
+                                <li><a>@AttendanceText</a></li>
+                                <li><a>@AttitudeText</a></li>
+                                <li><a>@AchievementText</a></li>
+                            </ul>
+                        </div>
+                    </ul>
+                    <i class="bi bi-list mobile-nav-toggle"></i>
+                </nav><!-- .navbar -->
+
+            </div>
+        </header><!-- End Header -->
+        <div class="main" id="main">
+            @{
+                if (Model != null)
+                {
+                    foreach (Student student in Model.Students)
+                    {
+                        <div class="button-timetable" id="timetable_button" onclick="showTimetable()">
+                            <a>Timetable</a>
+                        </div>
+                        <div id="timetable_display" class="modal" style="display: none;">
+                            <div class="modal-content">
+                                <span class="close" onclick="hideTimetable()">&times;</span>
+                                <img class="img" src="@Url.Content("~/timetables/students/" + student.Timetable)" />
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        </div>
+        <div class="main-container" id="main-container">
+            <div class="list-container assignments" id="container_one">
+                <div class="user-type">
+                    <ul id="due-list">
+                        <li><a>Assignments Due</a></li>
+                    </ul>
+                </div>
+                <div class="row" id="list_assignments">
+                    <div class="col-sm-12">
+                        <div class="panel pane-default">
+                            <div class="panel-body">
+                                <table class="table table-striped flex-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="flex-id">ID</th>
+                                            <th class="flex-date">Due Date</th>
+                                            <th class="flex-details">Details</th>
+                                            <th class="flex-edit"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (Model != null)
+                                            {
+                                                foreach (NotSubmitted ass in Model.NotSubmittedAssignments)
+                                                {
+                                                    <tr>
+                                                        <td class="flex-id">@ass.AssignmentID</td>
+                                                        <td class="flex-date">@ass.EndDate</td>
+                                                        <td class="flex-details">@ass.Details</td>
+                                                        <td class="flex-edit style" onclick="editAssignment('@ass.AssignmentID', '@ass.StartDate', '@ass.EndDate', '@ass.Details')">
+                                                            <a>
+                                                                Edit
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="list-container assignments-due" id="container_two">
+                <div class="user-type">
+                    <ul id="submitted-list">
+                        <li><a>Submitted Assignments</a></li>
+                    </ul>
+                </div>
+                <div class="row" id="list_students">
+                    <div class="col-sm-12">
+                        <div class="panel pane-default">
+                            <div class="panel-body">
+                                <table class="table table-striped flex-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="flex-sub-id">ID</th>
+                                            <th class="flex-sub-date">Due Date</th>
+                                            <th class="flex-sub-details">Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (Model != null)
+                                            {
+                                                foreach (SubmittedAssignments ass in Model.SubmittedAssignments)
+                                                {
+                                                    <tr>
+                                                        <td class="flex-sub-id">@ass.AssignmentID</td>
+                                                        <td class="flex-sub-date">@ass.EndDate</td>
+                                                        <td class="flex-sub-details">@ass.Details</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--EDIT ASSIGNMENT-->
+            <div class="edit-container" id="edit_container" style="display: none;">
+                <div class="user-type">
+                    <ul>
+                        <li><a id="form_title">Edit Assignment</a></li>
+                    </ul>
+                </div>
+                <form id="student_form" enctype="multipart/form-data" method="post">
+                    Assignment ID: <input class="input" id="edit_ass_id" type="text" name="edit_ass_id" readonly/><br /><br />
+                    Start Date: <input class="input" id="edit_ass_start" type="text" name="edit_ass_start" readonly/><br /><br />
+                    End Date: <input class="input" id="edit_ass_end" type="text" name="edit_ass_end"  readonly /><br /><br />
+                    Details: <textarea class="input assignment-details" id="edit_ass_details" type="text" readonly></textarea><br /><br />
+                    <div class="upload_file">
+                        Upload File: <input class="input" id="upload_file" name="fileUpload" type="file" required/><br /><br />
+                    </div>
+                    <div class="buttons">
+                        <input class="form-btn" type="submit" asp-action="SubmitAssignment" value="Submit Assignment" />
+                        <input class="form-btn" onclick="cancelEdit()" type="reset" value="Cancel" />
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!-- End #main -->
+        <!-- ======= Footer ======= -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-md-12 col-lg-4">
+                        <div class="footer-logo">
+
+                            <a class="navbar-brand" href="#">WhippedMS</a>
+                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the.</p>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-2">
+                        <div class="list-menu">
+
+                            <h4>About Us</h4>
+
+                            <ul class="list-unstyled">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Features item</a></li>
+                                <li><a href="#">Live streaming</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-2">
+                        <div class="list-menu">
+
+                            <h4>Support</h4>
+
+                            <ul class="list-unstyled">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Features item</a></li>
+                                <li><a href="#">Live streaming</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-2">
+                        <div class="list-menu">
+
+                            <h4>Contact</h4>
+
+                            <ul class="list-unstyled">
+                                <li><a href="#">faq</a></li>
+                                <li><a href="#">Editor help</a></li>
+                                <li><a href="#">Contact us</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 col-lg-2">
+                        <div class="list-menu">
+
+                            <h4>FAQs</h4>
+
+                            <ul class="list-unstyled">
+                                <li><a href="#">About us</a></li>
+                                <li><a href="#">Features item</a></li>
+                                <li><a href="#">Live streaming</a></li>
+                                <li><a href="#">Privacy Policy</a></li>
+                            </ul>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </footer><!-- End  Footer -->
+        <script src="~/js/student.js"></script>
+    </body>
+</html>

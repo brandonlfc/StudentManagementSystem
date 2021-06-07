@@ -1,0 +1,344 @@
+﻿/**
+* Template Name: eStartup - v4.2.0
+* Template URL: https://bootstrapmade.com/estartup-bootstrap-landing-page-template/
+* Author: BootstrapMade.com
+* License: https://bootstrapmade.com/license/
+*/
+
+@charset "UTF-8";
+/*--------------------------------------------------------------
+# General
+--------------------------------------------------------------*/
+body {
+    background-color: #fff;
+    color: #333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+}
+
+h2 {
+    color: #000;
+    font-weight: 600;
+}
+
+h4 {
+    color: #000;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 2;
+}
+
+h5 {
+    color: #626262;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+a {
+    letter-spacing: 2px;
+    text-decoration: none;
+    color: #71c55d;
+}
+
+    a:hover {
+        color: #92d283;
+    }
+
+ul {
+    letter-spacing: 1px;
+}
+
+li {
+    color: #626262;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    line-height: 30px;
+    text-transform: capitalize;
+}
+
+p {
+    color: #505050;
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    line-height: 2;
+    margin-bottom: 20px;
+}
+
+span {
+    letter-spacing: 1px;
+}
+
+.container-full {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.btn {
+    border: 1px solid #fff;
+    border-radius: 50px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 15px 40px;
+    text-transform: uppercase;
+    transition: all 0.5s ease-in-out 0s;
+}
+
+.btn-default:hover {
+    color: #fff;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+}
+
+.fa {
+    text-decoration: none;
+    font-size: 13px;
+}
+
+/*--------------------------------------------------------------
+# Main Content 
+--------------------------------------------------------------*/
+.main-container {
+    margin-top: 150px;
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 100px;
+}
+
+.registered-container, .create-container {
+    height: 800px;
+    width: 700px;
+}
+
+.create-container form {
+    font-size: 20px;
+    padding: 0 50px 0px 50px; /*top, right, bottom, left*/
+}
+
+.create-container .input {
+    width: 200px;
+    height: 30px;
+    float: right;
+}
+
+form {
+    margin-top: 50px;
+}
+
+input[type="radio"] {
+    transform: scale(1.5);
+    float: right;
+}
+
+.input {
+    font-size: 13px;
+}
+
+.form-btn {
+    height: 50px;
+    width: auto;
+    min-width: 100px;
+    position: relative;
+    right: 0;
+    bottom: 0;
+    background-color: light-grey;
+    font-size: 16px;
+}
+
+
+
+.user-type {
+    min-width: 100%;
+    /*height: 50px;*/
+    background-color: #c5e3df;
+}
+
+.user-type:hover {
+    cursor: pointer;
+}
+
+.user-type a {
+    font-size: 32px;
+    line-height: 50px;
+    text-decoration: underline;
+}
+
+.user-type ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    height: 50px;
+}
+
+.user-type li {
+    display: inline-block;
+    min-width: 100px;
+    min-height: 100%;
+    list-style: none;
+    text-align: center;
+    line-height: 50px; /*Set to same height as .user-type to set text to center*/
+}
+
+.student {
+    box-shadow: 0 3px 10px rgba(183, 220, 244, 0.3),
+                0 3px 30px rgba(183, 220, 244, 0.3),
+                0 3px 50px rgba(183, 220, 244, 0.3),
+                0 3px 56px rgba(183, 220, 244, 0.2),
+                0 3px 58px rgba(183, 220, 244, 0.3),
+                0 3px 60px rgba(183, 220, 244, 0.3);
+}
+
+.teacher {
+    box-shadow: 0 3px 10px rgba(255, 183, 178, 0.3),
+                0 3px 30px rgba(255, 183, 178, 0.3),
+                0 3px 50px rgba(255, 183, 178, 0.3),
+                0 3px 60px rgba(255, 183, 178, 0.2);
+}
+
+.editUser {
+    box-shadow: 0 3px 10px rgba(247, 208, 2, 0.3),
+                0 3px 30px rgba(247, 208, 2, 0.3),
+                0 3px 50px rgba(247, 208, 2, 0.3),
+                0 3px 60px rgba(247, 208, 2, 0.2);
+}
+
+/*--------------------------------------------------------------
+# Forms
+--------------------------------------------------------------*/
+
+.registered-list td {
+    padding: 10px 0px 0px 0px;
+    border: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.registered-list {
+    overflow-y: scroll;
+    max-width: 700px;
+    min-height: 724px;
+}
+/*
+.table {
+    background: #fff;
+    max-height: 470px;
+    overflow-y: scroll;
+    box-shadow: 0px 10px 50px 0px rgba(0,0,0,0.5);
+    border-radius: 10px;
+}
+
+*/
+
+.registered-list /*table*/ {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+/*
+thead th {
+    text-align: center;
+}
+
+*/
+
+
+
+
+
+
+.flex-id {
+    flex: 1 !important;
+}
+
+.flex-first {
+    flex: 3 !important;
+}
+
+.flex-last {
+    flex: 3 !important;
+}
+
+.flex-email {
+    flex: 4 !important;
+}
+
+.flex-class {
+    flex: 4 !important;
+}
+
+
+.flex-edit {
+    flex: 1.5 !important;
+    cursor: pointer;
+}
+
+.flex-edit.style:hover {
+    cursor: pointer;
+    background-color: #B6B5BA !important;
+}
+
+.flex-edit.style {
+    background-color: #C9C6CD !important;
+}
+
+
+
+
+
+
+
+.panel-body {
+    height: 750px;
+}
+
+table {
+    border-top: 1px solid black; /* Just to Highlight Top of Table */
+}
+
+table thead tr {
+    height: 5em; /* Fixed Row Height */
+}
+
+/* Flex Table */
+table.flex-table {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+table.flex-table thead,
+table.flex-table tbody {
+    display: block;
+}
+
+table.flex-table thead {
+    margin-right: 0px;
+}
+
+table.flex-table tbody {
+    flex: 1;
+    overflow-y: scroll;
+    word-wrap: anywhere;
+}
+
+table.flex-table tr {
+    width: 100%;
+    display: flex;
+}
+
+table.flex-table tr td,
+table.flex-table tr th {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+

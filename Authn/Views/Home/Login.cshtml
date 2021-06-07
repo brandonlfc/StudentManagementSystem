@@ -1,0 +1,41 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "";
+    ViewData["Title"] = "Login";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+    var error = TempData["Error"] as string;
+}
+@if(!string.IsNullOrEmpty(error))
+            {
+                <h2 class="alert-danger" style="padding: 20px;">@error</h2>
+            }
+<!DOCTPYE html>
+    <html lang="EN-nz">
+    <head>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+        <title>
+            SMS Mock - Log In
+        </title>
+        <link rel="stylesheet" href="~/css/login.css" />
+    </head>
+    <body>
+        <div class="login-page">
+            <div class="form">
+                <form class="login-form" action="/login?ReturnUrl=@System.Net.WebUtility.UrlEncode(returnUrl)" method="post">
+                    <input type="text" name="username" placeholder="Username" /><br /><br />
+                    <input type="password" name="password" placeholder="Password" /><br /><br />
+                    Select User Type<select name="usertype">
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <input type="submit" value="LOGIN" />
+                    <p class="message"><a href="#">Forgot Password?</a></p>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>
