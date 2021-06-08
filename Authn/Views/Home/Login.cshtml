@@ -6,10 +6,15 @@
     ViewData["Title"] = "Login";
     var returnUrl = ViewData["ReturnUrl"] as string;
     var error = TempData["Error"] as string;
+    var passchange = TempData["PassChange"] as string;
 }
-@if(!string.IsNullOrEmpty(error))
+@if (!string.IsNullOrEmpty(error))
+{
+    <h2 class="alert-danger" style="padding: 20px;">@error</h2>
+}
+@if (!string.IsNullOrEmpty(passchange))
             {
-                <h2 class="alert-danger" style="padding: 20px;">@error</h2>
+                <h2 style="padding: 20px;">@passchange</h2>
             }
 <!DOCTPYE html>
     <html lang="EN-nz">
@@ -33,7 +38,7 @@
                         <option value="admin">Admin</option>
                     </select>
                     <input type="submit" value="LOGIN" />
-                    <p class="message"><a href="#">Forgot Password?</a></p>
+                    <p class="message"><a asp-action="ForgotPassword">Forgot Password?</a></p>
                 </form>
             </div>
         </div>

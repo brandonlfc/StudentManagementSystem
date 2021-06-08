@@ -13,12 +13,13 @@ using System.Data;
 using System.Diagnostics;
 using System.Dynamic;
 using System.IO;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
-using System.Web;
 using Aspose.Words;
+using System.Net.Mail;
+using System.Net;
+using System.Text;
+using System.Web;
 
 namespace Authn.Controllers
 {
@@ -184,7 +185,7 @@ namespace Authn.Controllers
             cmd1.ExecuteNonQuery();
             conn.Close(); //Close connection to database
 
-            return Redirect("Student");
+            return RedirectToAction("Student");
         }
 
         //Gets all the assignments the student hasn't submitted then stores them into the NotSubmitted List
@@ -796,7 +797,7 @@ namespace Authn.Controllers
                 conn.Close();
             }
 
-            return Redirect("Teacher");
+            return RedirectToAction("Teacher");
         }
 
         [Authorize(Roles = "Teacher")]
@@ -835,7 +836,7 @@ namespace Authn.Controllers
                 conn.Close();
             }
 
-            return Redirect("Teacher");
+            return RedirectToAction("Teacher");
         }
 
         //Teacher views students submited assignments then grades them
@@ -853,7 +854,7 @@ namespace Authn.Controllers
             cmd.ExecuteNonQuery();
             conn.Close();
 
-            return Redirect("Teacher");
+            return RedirectToAction("Teacher");
         }
 
         [Authorize(Roles = "Teacher")]
@@ -882,7 +883,7 @@ namespace Authn.Controllers
 
             AssignAssignment();
 
-            return Redirect("Teacher");
+            return RedirectToAction("Teacher");
         }
 
         [Authorize(Roles = "Teacher")]
@@ -954,7 +955,7 @@ namespace Authn.Controllers
             }
             conn.Close();
 
-            return Redirect("Secured");
+            return RedirectToAction("Secured");
         }
 
         [Authorize(Roles = "Admin")]
@@ -1002,7 +1003,7 @@ namespace Authn.Controllers
             cmd.ExecuteNonQuery();
             conn.Close();
             
-            return Redirect("Secured");
+            return RedirectToAction("Secured");
         }
 
         [Authorize(Roles = "Admin")]
@@ -1018,7 +1019,7 @@ namespace Authn.Controllers
             cmd.ExecuteNonQuery();
             conn.Close();
 
-            return Redirect("Secured");
+            return RedirectToAction("Secured");
         }
 
         [Authorize(Roles = "Admin")]
@@ -1034,7 +1035,7 @@ namespace Authn.Controllers
             cmd.ExecuteNonQuery();
             conn.Close();
 
-            return Redirect("Secured");
+            return RedirectToAction("Secured");
         }
 
         //Registers teacher into the database from the Admin Portal
@@ -1074,7 +1075,7 @@ namespace Authn.Controllers
             cmd.ExecuteNonQuery();
             conn.Close(); //Close connection to database
 
-            return Redirect("Secured"); //Redirect to Admin Page
+            return RedirectToAction("Secured"); //Redirect to Admin Page
         }
 
         //Registers student into the database from the Admin Portal
@@ -1116,7 +1117,7 @@ namespace Authn.Controllers
             cmd.ExecuteNonQuery();
             conn.Close();
 
-            return Redirect("Secured");
+            return RedirectToAction("Secured");
         }
 
         //Redirects to Admin portal. Gets Student and Teacher list and stores into a model to be display on the Admin Porta
@@ -1147,11 +1148,133 @@ namespace Authn.Controllers
             return View();
         }
 
+        public IActionResult PasswordReset()
+        {
+            ViewBag.ResetCode = Request.Query["guidcode"];
+            ViewBag.User = Request.Query["user"];
+
+            return View();
+        }
+
         [HttpGet("login")]
         public IActionResult Login(string returnUrl)
         {
             ViewData["ReturnUrl"] = returnUrl;
             return View();
+        }
+
+        [HttpGet("ForgotPassword")]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        public IActionResult ResetUserPassword(string ConfirmNewPassword, string user, string ResetCode)
+        {
+            SqlCommand cmd = new SqlCommand(null, conn);
+
+            if (user == "Student")
+            {
+                cmd.CommandText = "updateStudentPassword";
+            }
+            else if (user == "Teacher")
+            {
+                cmd.CommandText = "updateTeacherPassword";
+            }
+            else if (user == "Admin")
+            {
+                cmd.CommandText = "updateAdminPassword";
+            }
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Password", ConfirmNewPassword);
+            cmd.Parameters.AddWithValue("@ResetCode", ResetCode);
+
+            conn.Open();
+            cmd.ExecuteNonQuery();
+            conn.Close();
+
+            
+            TempData["PassChange"] = "Password Successfully Changed";
+            return Redirect("~/Login?ReturnUrl=%2FHome%2FSecured");
+        }
+
+        public IActionResult ResetPassword(string Email, string usertype)
+        {
+            SqlCommand cmd = new SqlCommand(null, conn);
+            if (usertype == "Student")
+            {
+                cmd.CommandText = "resetGetStudentEmail";
+            }
+            else if (usertype == "Teacher")
+            {
+                cmd.CommandText =  "resetGetTeacherEmail";
+            }
+            else if (usertype == "Admin")
+            {
+                cmd.CommandText =  "resetGetAdminEmail";
+            }
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@Email", Email);
+
+            conn.Open();
+            int loginResult = Convert.ToInt32(cmd.ExecuteScalar());
+            conn.Close();
+
+            if(loginResult == 1)
+            {
+                string GuidID = loginResult.ToString();
+                TempData["GuidID"] = GuidID;
+
+                string resetCode = Guid.NewGuid().ToString();
+                SqlCommand cmd1 = new SqlCommand("assign"+usertype+"ResetCode", conn);
+                cmd1.CommandType = CommandType.StoredProcedure;
+
+                cmd1.Parameters.AddWithValue("@Email", Email);
+                cmd1.Parameters.AddWithValue("@ResetCode", resetCode);
+
+                conn.Open();
+                cmd1.ExecuteNonQuery();
+                conn.Close();
+
+                try
+                {
+                    SendEmail(Email, resetCode, usertype);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error: ", ex);
+                }
+
+                return RedirectToAction("ForgotPassword");
+            }
+            else
+            {
+                TempData["Error"] = "Error. Incorrect Email";
+                return RedirectToAction("ForgotPassword");
+            }
+        }
+
+        //Email sending for forgotten password
+        public void SendEmail(string Email, string resetCode, string userType)
+        {
+            using (MailMessage mm = new MailMessage("ProjectileProtectionIV@gmail.com", Email))
+            {
+                string link = "https://localhost:5001/Home/PasswordReset?user="+userType+"&guidcode=" + resetCode;
+                mm.Subject = "Password Reset For Student Management Systems";
+                mm.Body = "You have requested a password reset for your Student Management Systems account\n"
+                        + "Please click the link below to change your password:\n" +  link;
+                mm.BodyEncoding = Encoding.UTF8;
+                mm.IsBodyHtml = true;
+
+                SmtpClient smtp = new SmtpClient();
+                NetworkCredential NetworkCred = new NetworkCredential("ProjectileProtectionIV@gmail.com", "H@rryP0tt3r");
+                smtp.Host = "smtp.gmail.com";
+                smtp.EnableSsl = true;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = NetworkCred;
+                smtp.Port = 587;
+                smtp.Send(mm);
+            }
         }
 
         //Set up with database to validate username and password. Look up credentials in database
@@ -1189,7 +1312,7 @@ namespace Authn.Controllers
                     await HttpContext.SignInAsync(claimsPrincipal);
 
                     /*return Redirect(returnUrl);*/
-                    return Redirect("~/Home/Student");
+                    return RedirectToAction("Student");
                 }
             }
             else if (usertype == "teacher")
@@ -1220,7 +1343,7 @@ namespace Authn.Controllers
                     await HttpContext.SignInAsync(claimsPrincipal);
 
                     /*return Redirect(returnUrl);*/
-                    return Redirect("~/Home/Teacher");
+                    return RedirectToAction("Teacher");
                 }
             }
             else if (usertype == "admin") 
