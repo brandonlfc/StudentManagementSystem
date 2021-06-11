@@ -21,6 +21,12 @@
     <!-- Vendor CSS Files -->
     <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Vendor CSS Files -->
+    <link href="~/assets/vendor/aos/aos.css" rel="stylesheet">
+    <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="~/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+    <link href="~/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
     <!-- Template Main CSS File -->
     <link href="~/css/secured.css" rel="stylesheet">
     <link href="~/css/header-footer.css" rel="stylesheet">
@@ -47,7 +53,7 @@
             <nav id="navbar" class="navbar">
                 <ul>
                     <li><a class="nav-link" href="/">Home</a></li>
-                    <li><a class="nav-link active">Admin</a></li>
+                    <li><a class="nav-link active" href="#">Admin</a></li>
                     <li><a class="nav-link" asp-action="Logout">Logout</a></li>
                 </ul>
                 <i class="bi bi-list mobile-nav-toggle"></i>
@@ -229,7 +235,7 @@
                         <option value="Pacific">Pacific</option>
                         <option value="MELAA">MELAA</option>
                     </select><br /><br />
-                    Timetable: <input id="edit_stud_timetable" class="input" type="file" name="update_stud_timetable"/><br />
+                    Timetable: <input id="edit_stud_timetable" class="input" type="file" name="update_stud_timetable" /><br />
                     File:<input id="uploaded_stud_timetable" class="input" name="uploaded_stud_timetable" readonly /><br /><br />
                     <input class="form-btn" type="submit" asp-action="UpdateStudentDetails" value="Save Edit" />
                     <input class="form-btn cancel" type="reset" value="Cancel" onclick="cancelEdit()" />
@@ -249,8 +255,8 @@
                         <option value="Software Development">Software Development</option>
                         <option value="Cloud Management">Cloud Management</option>
                     </select><br /><br />
-                    Timetable: <input id="edit_teach_timetable" class="input" type="file" name="update_teach_timetable"/><br />
-                    File:<input id="uploaded_teach_timetable" class="input" name="uploaded_teach_timetable" readonly/><br/><br/>
+                    Timetable: <input id="edit_teach_timetable" class="input" type="file" name="update_teach_timetable" /><br />
+                    File:<input id="uploaded_teach_timetable" class="input" name="uploaded_teach_timetable" readonly /><br /><br />
                     <input class="form-btn" type="submit" asp-action="UpdateTeacherDetails" value="Save Edit" />
                     <input class="form-btn cancel" type="reset" value="Cancel" onclick="cancelEdit()" />
                     <input class="form-btn" type="submit" asp-action="DeleteTeacher" value="Delete" />
@@ -336,9 +342,9 @@
             </div>
         </div>
     </footer><!-- End  Footer -->
-
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
     <!--Register and Create-->
     <script src="~/js/secured.js"></script>
-
+    <script src="~/assets/js/main-secured.js"></script>
 </body>
 </html>

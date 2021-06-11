@@ -342,3 +342,25 @@ table.flex-table tr th {
     text-align: center;
 }
 
+
+
+/*---------------------------------------------
+    MOBILE STYLING
+---------------------------------------------*/
+@media (max-width: 1429px) {
+    .main-container {
+        display: grid;
+    }
+
+    #container_two {
+        margin-top: 100px;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+
+    .page-title {
+        margin-left: 0 !important;
+    }
+}

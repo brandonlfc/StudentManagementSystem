@@ -186,8 +186,3 @@ function cancelEdit() {
 	registerTeacher.style.fontWeight = "normal"; //Sets font of create teacher to normal
 	createTitle.text = "Create Student"; //Sets the text of the register form
 }
-
-
-
-
-

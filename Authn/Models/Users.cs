@@ -8,13 +8,13 @@ namespace Authn.Models
 {
     public class Student
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string First_Name { get; set; }
         public string Last_Name { get; set; }
         public string Email { get; set; }
         public string Class { get; set; }
         public string Phone { get; set; }
-        public string DOB { get; set; }
+        public DateTime DOB { get; set; }
         public string Ethnicity { get; set; }
         public string Timetable { get; set; }
         public string Assignments { get; set; }
@@ -23,7 +23,7 @@ namespace Authn.Models
 
     public class Teacher
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string First_Name { get; set; }
         public string Last_Name { get; set; }
         public string Email { get; set; }

@@ -307,7 +307,7 @@ namespace Authn.Controllers
                 {
                     students.Add(new Student() //Adds new item to teachers list
                     {
-                        Id = dr["Id"].ToString().Trim(),
+                        Id = (int)dr["Id"],
                         First_Name = dr["First_Name"].ToString().Trim(),
                         Last_Name = dr["Last_Name"].ToString().Trim(),
                         Email = dr["Email"].ToString().Trim(),
@@ -376,7 +376,7 @@ namespace Authn.Controllers
                 {
                     teachers.Add(new Teacher() //Adds new item to teachers list
                     {
-                        Id = dr["Id"].ToString().Trim(),
+                        Id = (int)dr["Id"],
                         First_Name = dr["First_Name"].ToString().Trim(),
                         Last_Name = dr["Last_Name"].ToString().Trim(),
                         Email = dr["Email"].ToString().Trim(),
@@ -419,7 +419,7 @@ namespace Authn.Controllers
                 {
                     students.Add(new Student() //Adds new item to students list
                     {
-                        Id = dr["Id"].ToString().Trim(),
+                        Id = (int)dr["Id"],
                         First_Name = dr["First_Name"].ToString().Trim(),
                         Last_Name = dr["Last_Name"].ToString().Trim(),
                         Email = dr["Email"].ToString().Trim(),
@@ -455,13 +455,13 @@ namespace Authn.Controllers
                 {
                     students.Add(new Student()
                     {
-                        Id = dr["Id"].ToString().Trim(),
+                        Id = (int)dr["Id"],
                         First_Name = dr["First_Name"].ToString().Trim(),
                         Last_Name = dr["Last_Name"].ToString().Trim(),
                         Email = dr["Email"].ToString().Trim(),
                         Class = dr["Class"].ToString().Trim(),
                         Phone = dr["Phone"].ToString().Trim(),
-                        DOB = dr["D.O.B"].ToString().Trim(),
+                        DOB = (DateTime)dr["D.O.B"],
                         Ethnicity = dr["Ethnicity"].ToString().Trim(),
                         Timetable = dr["Timetable"].ToString().Trim(),
                         Assignments = dr["Assignments"].ToString().Trim(),
@@ -495,7 +495,7 @@ namespace Authn.Controllers
                 {
                     teachers.Add(new Teacher() //Adds new item to teachers list
                     {
-                        Id = dr["Id"].ToString().Trim(),
+                        Id = (int)dr["Id"],
                         First_Name = dr["First_Name"].ToString().Trim(),
                         Last_Name = dr["Last_Name"].ToString().Trim(),
                         Email = dr["Email"].ToString().Trim(),
@@ -593,7 +593,7 @@ namespace Authn.Controllers
                     cmd1.Connection = conn;
                     cmd1.CommandType = CommandType.StoredProcedure;
 
-                    cmd1.Parameters.AddWithValue("@Id", stud.Id.Trim());
+                    cmd1.Parameters.AddWithValue("@Id", stud.Id);
 
                     if (notSubmitted.Length > 0) //If there are any assignments not submitted
                     {
@@ -628,7 +628,7 @@ namespace Authn.Controllers
 
                     cmd2.CommandType = CommandType.StoredProcedure;
 
-                    cmd2.Parameters.AddWithValue("@Id", stud.Id.Trim());
+                    cmd2.Parameters.AddWithValue("@Id", stud.Id);
                     cmd2.Parameters.AddWithValue("@Assignments", notSubmitted);
                     cmd2.Parameters.AddWithValue("@SubmittedAssignments", DBNull.Value);
 
@@ -648,7 +648,7 @@ namespace Authn.Controllers
             int? StudentID = null;
             foreach(Student stud in students)
             {
-                StudentID = Convert.ToInt32(stud.Id.Trim());
+                StudentID = stud.Id;
             }
 
             cmd.Parameters.AddWithValue("@StudentID", StudentID);
@@ -687,7 +687,7 @@ namespace Authn.Controllers
             int? StudentID = null;
             foreach (Student stud in students)
             {
-                StudentID = Convert.ToInt32(stud.Id.Trim());
+                StudentID = stud.Id;
             }
 
             cmd.Parameters.AddWithValue("@StudentID", StudentID);
@@ -726,7 +726,7 @@ namespace Authn.Controllers
             int? StudentID = null;
             foreach (Student stud in students)
             {
-                StudentID = Convert.ToInt32(stud.Id.Trim());
+                StudentID = stud.Id;
             }
 
             cmd.Parameters.AddWithValue("@StudentID", StudentID);
@@ -881,7 +881,7 @@ namespace Authn.Controllers
             cmd.ExecuteNonQuery();
             conn.Close();
 
-            AssignAssignment();
+            //AssignAssignment();
 
             return RedirectToAction("Teacher");
         }
@@ -894,7 +894,7 @@ namespace Authn.Controllers
             mymodel.Students = GetStudentsForTeacher();
             mymodel.Assignments = GetAssignments();
             mymodel.Submitted = GetListOfSubmitted();
-            //AssignAssignment();
+            AssignAssignment();
 
             return View(mymodel);
         }
