@@ -16,7 +16,7 @@ namespace Authn
             CreateHostBuilder(args).Build().Run();
         }
 
-        static public string connString = @"Data source=(LocalDB)\mssqllocaldb; Database=StudentManagementSystem; Integrated Security = true";
+        static public string connString = @"Data source=tcp:student-management-system.database.windows.net,1433;Initial Catalog=StudentManagementSystem;Persist Security Info=False;User ID=SMSAdmin;Password=bfs9bRYxMezZ5rc;Integrated Security = False;MultipleActiveResultSets=False;Encrypt=True;Connection Timeout=30;";
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)

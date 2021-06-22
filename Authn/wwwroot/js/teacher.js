@@ -11,19 +11,6 @@ var formTitle = document.getElementById("form_title");
 var createAssignment = document.getElementById("create_assignments"); //Button to switch to create assignment view
 var viewAssignment = document.getElementById("view_assignments"); //Button to switch to assignment view
 
-function regStudents() {
-	containerOne.classList.remove("teacher");
-	containerOne.classList.add("student");
-
-	registeredTitle.text = "Registered Students";
-
-	listStudent.style.display = "block";
-	listTeacher.style.display = "none";
-
-	selectStudent.style.fontWeight = "bold";
-	selectTeacher.style.fontWeight = "normal";
-}
-
 /*View or Create Assignments*/
 function createAssignments() {
 	listAssignment.style.display = "none"
@@ -49,25 +36,6 @@ function viewAssignments() {
 
 	viewAssignment.style.fontWeight = "bold";
 	createAssignment.style.fontWeight = "normal";
-}
-
-
-
-
-var timetableDisplay = document.getElementById("timetable_display");
-
-function showTimetable() {
-	timetableDisplay.style.display = "block";
-}
-
-function hideTimetable() {
-	timetableDisplay.style.display = "none";
-}
-
-window.onclick = function (event) {
-	if (event.target == timetableDisplay) {
-		timetableDisplay.style.display = "none";
-    }
 }
 
 
@@ -181,11 +149,58 @@ function gradeAssignment(StudentID, AssignmentID, AssignmentName, Details, Class
 	document.getElementById("grade-assid").value = AssignmentID;
 	document.getElementById("grade-details").value = Details;
 
-	pdf.href = window.location.origin + "/assignments/" + Class.trim() + "/" + AssignmentName;
+	pdf.href = window.location.origin + "/Assignments/" + Class.trim() + "/" + AssignmentName;
 }
 
 function Cancel() {
 	GradeAssignment.style.display = "none";
 
 	AchievementContainer.style.display = "flex";
+}
+
+
+/*Don't allow creation of assignment if date set to past date*/
+var StartValidation = document.getElementById("startValidation");
+var EndValidation = document.getElementById("endValidation");
+
+function checkDate() {
+
+	var StartDate = document.getElementById("startDate").value;
+	var EndDate = document.getElementById("endDate").value;
+	var SubmitButton = document.getElementById("submitButton");
+
+	var SelectedStartDate = new Date(StartDate);
+	var SelectedEndDate = new Date(EndDate);
+
+	var TodayDate = new Date().setHours(0, 0, 0); /*Sets the time portion to 0 to allow assignments to be created on the same day*/
+
+	/*Disable button if start or end date is in the past, or if end date is before the start date*/
+	if (SelectedStartDate < TodayDate || SelectedEndDate < TodayDate || SelectedEndDate < SelectedStartDate) {
+		SubmitButton.disabled = true;
+	}
+	/*Enable button if start and end date is a future date, and if end date is after the start date*/
+	else if (SelectedStartDate >= TodayDate && SelectedEndDate > TodayDate && SelectedEndDate >= SelectedStartDate) {
+		SubmitButton.disabled = false;
+	}
+
+	/*If Start Date is after present date, hide validation text. Else if Start End is before present Date, show validation text*/
+	if (SelectedStartDate > TodayDate) {
+		StartValidation.classList.add("validation");
+	}
+	else if (SelectedStartDate < TodayDate) {
+		StartValidation.classList.remove("validation");
+	}
+
+	/*If End Date is after Start Date, hide validation text. Else if End Date is before Start Date, show validation text*/
+	if (SelectedEndDate >= SelectedStartDate) {
+		EndValidation.classList.add("validation");
+	}
+	else if (SelectedEndDate < SelectedStartDate) {
+		EndValidation.classList.remove("validation");
+    }
+}
+
+function resetValidation() {
+	StartValidation.classList.add("validation");
+	EndValidation.classList.add("validation");
 }

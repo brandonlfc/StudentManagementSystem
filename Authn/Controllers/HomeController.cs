@@ -31,7 +31,6 @@ namespace Authn.Controllers
         List<Student> students = new List<Student>();
         List<Teacher> teachers = new List<Teacher>();
         List<Assignment> assignments = new List<Assignment>();
-        List<TeacherTimetable> timetables = new List<TeacherTimetable>();
 
         List<TeacherSubmitted> teachersubmitted = new List<TeacherSubmitted>();
 
@@ -47,9 +46,6 @@ namespace Authn.Controllers
         List<Student> totalAssignments = new List<Student>();
         List<Student> studAssignments = new List<Student>();
 
-
-        //public string teachTimetable;
-
         private readonly ILogger<HomeController> _logger;
         private IWebHostEnvironment _env;
 
@@ -60,19 +56,21 @@ namespace Authn.Controllers
         }
 
 
+        //Student submitting their assignment
         [Authorize(Roles = "Student")]
         public IActionResult SubmitAssignment(IFormFile fileUpload, int edit_ass_id)
         {
-            GetStudentsClass();
+            GetStudentsClass(); //Get the students class
 
-            int? StudentID = null;
+            int? Id = null;
             string FirstName = String.Empty;
             string LastName = String.Empty;
             string Class = String.Empty;
 
+            //Set student details to previously initiliazed variables
             foreach (Student stud in students)
             {
-                StudentID = Convert.ToInt32(stud.Id);
+                Id = Convert.ToInt32(stud.Id);
                 FirstName = stud.First_Name;
                 LastName = stud.Last_Name;
                 Class = stud.Class;
@@ -80,7 +78,7 @@ namespace Authn.Controllers
 
 
             string submitted = String.Empty;
-            foreach (Student stud in students)
+            foreach (Student stud in students) //Runs this foreach loop once as only one student is in the last (the logged in student)
             {
                 if (students.Count > 1)
                 {
@@ -93,56 +91,53 @@ namespace Authn.Controllers
                 string[] sub = stud.SubmittedAssignments.Split(", ");
                 Array.Sort(sub);
 
-                for (int i = 0; i < sub.Length; i++)
+                for (int i = 0; i < sub.Length; i++) //Run for the length of the students submitted assignments
                 {
-                    submitted += sub[i] + ", ";
+                    submitted += sub[i] + ", "; //Adds a comma after each assignment
                 }
-                if(submitted.Length > 0)
+                if(submitted.Length > 0) //If theres submitted assignments
                 {
-                    submitted = submitted.Remove(submitted.Length - 2);
+                    submitted = submitted.Remove(submitted.Length - 2); //Removes the whitespace and the last comma
                 }
-                //submitted = stud.SubmittedAssignments;
             }
 
-            string assDue = String.Empty;
+            string Assignments = String.Empty;
 
             foreach (Student stud in students)
             {
                 string[] assignments = stud.Assignments.Split(", ");
 
-                for (int i = 0; i < assignments.Length; i++)
+                for (int i = 0; i < assignments.Length; i++) //Run for the length of the students assignments they need to complete
                 {
                     if(assignments[i].Contains(edit_ass_id.ToString()))
                     {
-                        //Console.WriteLine(assignments[i] + " | " + edit_ass_id);
                         submittedAssignments.Add(new SubmittedAssignments()
                         {
-                            AssignmentID = edit_ass_id,
+                            AssignmentID = edit_ass_id, //Adds the assignment the student has completed to a list
                         });
                     }
                     else
                     {
-                        assDue += assignments[i] + ", ";
-                        //Console.WriteLine(assignments[i] + " | " + edit_ass_id);
+                        Assignments += assignments[i] + ", "; //Adds the assignment the student hasn't completed to a string
                     }
                 }
-                if (assDue.Length > 0)
+                if (Assignments.Length > 0) //If there are assignments the student hasn't completed
                 {
-                    assDue = assDue.Remove(assDue.Length - 2);
+                    Assignments = Assignments.Remove(Assignments.Length - 2); //Remove the whitespace and the last comma
                 }
                 else
                 {
-                    assDue = DBNull.Value.ToString();
+                    Assignments = DBNull.Value.ToString(); //Set the string to null for the database if there are no assignments needed to complete
                 }
-                //Console.WriteLine(assDue);
             }
 
-            SqlCommand cmd = new SqlCommand("UPDATE Students SET Assignments = @assDue, SubmittedAssignments = @SubmittedAssignments WHERE Id=@StudentID", conn);
-            cmd.CommandType = CommandType.Text;
+            SqlCommand cmd = new SqlCommand("assignAssignment", conn);
+            //SqlCommand cmd = new SqlCommand("UPDATE Students SET Assignments = @assDue, SubmittedAssignments = @SubmittedAssignments WHERE Id=@StudentID", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@assDue", assDue);
+            cmd.Parameters.AddWithValue("@Assignments", Assignments);
             cmd.Parameters.AddWithValue("@SubmittedAssignments", submitted);
-            cmd.Parameters.AddWithValue("@StudentID", StudentID);
+            cmd.Parameters.AddWithValue("@Id", Id);
 
             conn.Open();
             cmd.ExecuteNonQuery();
@@ -153,37 +148,44 @@ namespace Authn.Controllers
             string pdfFileName = String.Empty;
             var guid = Guid.NewGuid();
             //Checks if a file was uploaded
-            if (fileUpload != null)
+            try
             {
-                string ext = System.IO.Path.GetExtension(fileUpload.FileName); //Gets the extension of the image uploaded
-                //Saves the image name as a combination of the teachers first name, last name and adds a guid in case teachers have the same names
-                fileName = edit_ass_id + "_" + FirstName + LastName + "_" + guid + ext;
-
-                string saveLocation = ("assignments/" + Class + "/").Trim(); //Where the image will be stored
-                saveLocation += fileName; //Adds the image name to where the image will be saved
-                var dir = Path.Combine(_env.WebRootPath, saveLocation); //Sets the save location of the image
-
-                //Saves the image to the folder specified with the name generated
-                using (var fileStream = new FileStream(dir, FileMode.Create, FileAccess.Write))
+                if (fileUpload != null)
                 {
-                    fileUpload.CopyTo(fileStream);
+                    string ext = System.IO.Path.GetExtension(fileUpload.FileName); //Gets the extension of the image uploaded
+                                                                                   //Saves the image name as a combination of the teachers first name, last name and adds a guid in case teachers have the same names
+                    fileName = edit_ass_id + "_" + FirstName + LastName + "_" + guid + ext;
+
+                    string saveLocation = ("Assignments/" + Class + "/").Trim(); //Where the image will be stored
+                    saveLocation += fileName; //Adds the image name to where the image will be saved
+                    var dir = Path.Combine(_env.WebRootPath, saveLocation); //Sets the save location of the image
+
+                    //Saves the image to the folder specified with the name generated
+                    using (var fileStream = new FileStream(dir, FileMode.Create, FileAccess.Write))
+                    {
+                        fileUpload.CopyTo(fileStream);
+                    }
+                    Document doc = new Document(dir);
+                    pdfFileName = edit_ass_id + "_" + FirstName + LastName + "_" + guid + ".pdf";
+                    doc.Save(Path.Combine(_env.WebRootPath, ("Assignments/" + Class + "/").Trim()) + pdfFileName);
                 }
-                Document doc = new Document(dir);
-                pdfFileName = edit_ass_id + "_" + FirstName + LastName + "_" + guid + ".pdf";
-                doc.Save(Path.Combine(_env.WebRootPath, ("assignments/" + Class + "/").Trim()) + pdfFileName);
+
+                //Runs the SQL Procedure Command
+                SqlCommand cmd1 = new SqlCommand("submitAssignment", conn); //Estabalishes connection to database and use the stored procedure
+                cmd1.CommandType = CommandType.StoredProcedure;
+
+                cmd1.Parameters.AddWithValue("@AssignmentID", edit_ass_id);
+                cmd1.Parameters.AddWithValue("@Name", pdfFileName);
+                cmd1.Parameters.AddWithValue("@StudentID", Id);
+
+                conn.Open(); //Open connection to database
+                cmd1.ExecuteNonQuery();
+                conn.Close(); //Close connection to database
             }
-
-            //Runs the SQL Procedure Command
-            SqlCommand cmd1 = new SqlCommand("submitAssignment", conn); //Estabalishes connection to database and use the stored procedure
-            cmd1.CommandType = CommandType.StoredProcedure;
-
-            cmd1.Parameters.AddWithValue("@AssignmentID", edit_ass_id);
-            cmd1.Parameters.AddWithValue("@Name", pdfFileName);
-            cmd1.Parameters.AddWithValue("@StudentID", StudentID);
-
-            conn.Open(); //Open connection to database
-            cmd1.ExecuteNonQuery();
-            conn.Close(); //Close connection to database
+            catch (Exception ex)
+            {
+                throw new Exception("Error: ", ex);
+            }
 
             return RedirectToAction("Student");
         }
@@ -255,8 +257,8 @@ namespace Authn.Controllers
                 studClass = stud.Class;
             }
 
-            SqlCommand cmd = new SqlCommand("SELECT * FROM Assignments WHERE Class=@Class", conn);
-            cmd.CommandType = CommandType.Text;
+            SqlCommand cmd = new SqlCommand("listAssignments", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Class", studClass);
 
             if (studentsAssignments.Count > 0)
@@ -289,7 +291,7 @@ namespace Authn.Controllers
 
         public List<Student> GetStudentsClass()
         {
-            SqlCommand cmd = new SqlCommand("getStudentClass", conn);
+            SqlCommand cmd = new SqlCommand("getClassStudent", conn);
             cmd.Connection = conn;
             cmd.CommandType = CommandType.StoredProcedure;
 
@@ -331,7 +333,6 @@ namespace Authn.Controllers
         {
             foreach (Student item in students)
             {
-                //SqlCommand cmd = new SqlCommand("SELECT * FROM Assignments INNER JOIN SubmittedAssignments ON Assignments.AssignmentID = SubmittedAssignments.AssignmentID WHERE StudentID = @StudentID AND Score IS NULL", conn);
                 SqlCommand cmd = new SqlCommand("getSubmitted", conn);
                 cmd.CommandType = CommandType.StoredProcedure;
 
@@ -358,7 +359,7 @@ namespace Authn.Controllers
 
         public List<Teacher> GetTeachersClass()
         {
-            SqlCommand cmd = new SqlCommand("getTeacherClass", conn);
+            SqlCommand cmd = new SqlCommand("getClassTeacher", conn);
             cmd.Connection = conn;
             cmd.CommandType = CommandType.StoredProcedure;
 
@@ -381,7 +382,7 @@ namespace Authn.Controllers
                         Last_Name = dr["Last_Name"].ToString().Trim(),
                         Email = dr["Email"].ToString().Trim(),
                         Class = dr["Class"].ToString().Trim(),
-                        Timetable = dr["Timetable"].ToString().Trim(),
+                        //Timetable = dr["Timetable"].ToString().Trim(),
                     });
                 }
                 conn.Close();
@@ -436,7 +437,6 @@ namespace Authn.Controllers
                 throw new Exception("Error: ", ex);
             }
         }
-
         public List<Student> GetStudents()
         {
             SqlCommand cmd = new SqlCommand("listStudents", conn);
@@ -500,7 +500,7 @@ namespace Authn.Controllers
                         Last_Name = dr["Last_Name"].ToString().Trim(),
                         Email = dr["Email"].ToString().Trim(),
                         Class = dr["Class"].ToString().Trim(),
-                        Timetable = dr["Timetable"].ToString().Trim(),
+                        //Timetable = dr["Timetable"].ToString().Trim(),
                     });
                 }
                 return teachers;
@@ -567,7 +567,6 @@ namespace Authn.Controllers
             {
                 if (stud.SubmittedAssignments != String.Empty) //Check if the student has submitted no assignments
                 {
-                    //Console.WriteLine("Student ID | First Name |  Last Name  | Assignments | Completed");
                     //Splits the list of submitted assignmets at the comma to store into the string array
                     string[] studSubmitted = stud.SubmittedAssignments.Split(',');
                     string notSubmitted = String.Empty; //Sets assignments that hasn't been complete back to nothing for each student in the list
@@ -578,14 +577,12 @@ namespace Authn.Controllers
                         if (studSubmitted.Length > i && studSubmitted[i].Contains(ass.AssignmentID.ToString()))
                         {
                             //Edits database to set complete assessments
-                            //Console.WriteLine(String.Format("    {0}           {1}       {2}         {3}            {4}", stud.Id, stud.First_Name, stud.Last_Name, ass.AssignmentID, studSubmitted[i].Trim()));
                             i++;
                         }
                         else
                         {
                             notSubmitted += ass.AssignmentID + ", "; //Adds comma after each assignment id not submitted
                             //Edits database to set incompleted assessments
-                            //Console.WriteLine(String.Format("    {0}           {1}       {2}         {3}", stud.Id, stud.First_Name, stud.Last_Name, ass.AssignmentID));
                         }
                     }
                     //Sets the student that has some assignments completed and sets the assignments that they haven't completed yet
@@ -604,7 +601,6 @@ namespace Authn.Controllers
                     {
                         cmd1.Parameters.AddWithValue("@Assignments", DBNull.Value);
                     }
-                    //Console.WriteLine(notSubmitted);
 
                     cmd1.Parameters.AddWithValue("@SubmittedAssignments", stud.SubmittedAssignments.Trim());
 
@@ -620,9 +616,15 @@ namespace Authn.Controllers
                     {
                         notSubmitted += ass.AssignmentID + ", "; //Adds comma after each assignment id not submitted
                     }
-                    notSubmitted = notSubmitted.Remove(notSubmitted.Length - 2); //Removes the leading comma and white space
-                    //Console.WriteLine(notSubmitted);
-
+                    if (notSubmitted.Length > 0) //If there are assignments the student hasn't completed
+                    {
+                        notSubmitted = notSubmitted.Remove(notSubmitted.Length - 2); //Removes the leading comma and white space
+                    }
+                    else
+                    {
+                        notSubmitted = DBNull.Value.ToString(); //Set the string to null for the database if there are no assignments needed to complete
+                    }
+                    
                     SqlCommand cmd2 = new SqlCommand("assignAssignment", conn);
                     cmd2.Connection = conn;
 
@@ -780,8 +782,6 @@ namespace Authn.Controllers
         [Authorize(Roles = "Teacher")]
         public IActionResult SubmitAttitude(int[] StudentID, int[] Attitude, DateTime Date)
         {
-            //Console.WriteLine(StudentID.Length);
-
             for (int i = 0; i < StudentID.Length; i++) //Runs for how ever many students are in the class
             {
                 SqlCommand cmd = new SqlCommand("submitAttitude", conn);
@@ -803,8 +803,6 @@ namespace Authn.Controllers
         [Authorize(Roles = "Teacher")]
         public IActionResult SubmitAttendance(int[] StudentID, string[] Attendance, DateTime Date)
         {
-            //Console.WriteLine(StudentID.Length);
-
             for (int i = 0; i < StudentID.Length; i++) //Runs for how ever many students are in the class
             {
                 int AttendancePoints = 0;
@@ -820,8 +818,6 @@ namespace Authn.Controllers
                     case "Absent":
                         break;
                 }
-
-                //Console.WriteLine(String.Format("ID: {0} | Attendance: {1} | Date: {2}", StudentID[i], Attendance[i], Date));
 
                 SqlCommand cmd = new SqlCommand("submitAttendance", conn);
                 cmd.Connection = conn;
@@ -843,8 +839,8 @@ namespace Authn.Controllers
         [Authorize(Roles ="Teacher")]
         public IActionResult GradeAssignment(int AssignmentID, float Grade, int StudentID)
         {
-            SqlCommand cmd = new SqlCommand("UPDATE SubmittedAssignments SET Score = @Grade WHERE AssignmentID = @AssignmentID AND StudentID = @StudentID", conn);
-            cmd.CommandType = CommandType.Text;
+            SqlCommand cmd = new SqlCommand("assignAssignmentGrade", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.AddWithValue("@AssignmentID", AssignmentID);
             cmd.Parameters.AddWithValue("@Grade", Grade);
@@ -858,7 +854,7 @@ namespace Authn.Controllers
         }
 
         [Authorize(Roles = "Teacher")]
-        public IActionResult CreateAssignment(string createStartDate, string createEndDate, string createDetails)
+        public IActionResult CreateAssignment(DateTime createStartDate, DateTime createEndDate, string createDetails)
         {
             GetAssignments();
             GetTeachersClass();
@@ -872,8 +868,8 @@ namespace Authn.Controllers
             SqlCommand cmd = new SqlCommand("createAssignment", conn);
             cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@Start_Date", createStartDate.Trim());
-            cmd.Parameters.AddWithValue("@End_Date", createEndDate.Trim());
+            cmd.Parameters.AddWithValue("@Start_Date", createStartDate);
+            cmd.Parameters.AddWithValue("@End_Date", createEndDate);
             cmd.Parameters.AddWithValue("@Details", createDetails.Trim());
             cmd.Parameters.AddWithValue("@Class", TeachersClass.Trim());
 
@@ -899,54 +895,56 @@ namespace Authn.Controllers
             return View(mymodel);
         }
         
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult UpdateStudentDetails(string edit_stud_id, string update_stud_first_name, string update_stud_last_name, string update_stud_email, string update_stud_class, string update_stud_phone, string update_stud_dob, string update_stud_ethnicity, IFormFile update_stud_timetable, string uploaded_stud_timetable)
+        public void StudentTimetable(IFormFile updatedTimetable, string oldTimetable, string FirstName, string LastName, SqlCommand cmd)
         {
             string imgName = DBNull.Value.ToString();
-            if (update_stud_timetable != null)
+            if (updatedTimetable != null)
             {
-                //string ext = System.IO.Path.GetExtension(update_timetable.FileName); //Gets the extension of the image uploaded
                 //Checks if there is already an existing gile
-                if (uploaded_stud_timetable != null)
+                if (oldTimetable != null)
                 {
-                    imgName = uploaded_stud_timetable; //Sets the updated files name to the existing file name
+                    imgName = oldTimetable; //Sets the updated files name to the existing file name
                 }
                 else
                 {
-                    string ext = System.IO.Path.GetExtension(update_stud_timetable.FileName); //Gets the extension of the image uploaded
+                    string ext = System.IO.Path.GetExtension(updatedTimetable.FileName); //Gets the extension of the image uploaded
                     //Saves the image name as a combination of the teachers first name, last name and adds a guid in case teachers have the same names
-                    imgName = update_stud_first_name + update_stud_last_name + "_" + Guid.NewGuid() + ext;
+                    imgName = FirstName + LastName + "_" + Guid.NewGuid() + ext;
                 }
-                string saveLocation = "timetables/students/"; //Where the image will be stored
+                string saveLocation = "Timetables/Students/"; //Where the image will be stored
                 saveLocation += imgName; //Adds the image name to where the image will be saved
                 var dir = Path.Combine(_env.WebRootPath, saveLocation); //Sets the save location of the image
 
                 //Saves the image to the folder specified with the name generated
                 using (var fileStream = new FileStream(dir, FileMode.Create, FileAccess.Write))
                 {
-                    update_stud_timetable.CopyTo(fileStream);
+                    updatedTimetable.CopyTo(fileStream);
                 }
             }
 
-            SqlCommand cmd = new SqlCommand("updateStudent", conn);
-            cmd.Connection = conn;
+            cmd.Parameters.AddWithValue("@Timetable", imgName.Trim());
+        }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult UpdateStudentDetails(string edit_stud_id, string update_stud_first_name, string update_stud_last_name, string update_stud_email, string update_stud_class, string update_stud_phone, string update_stud_dob, string update_stud_ethnicity, IFormFile update_stud_timetable, string uploaded_stud_timetable)
+        {
+          
+            SqlCommand cmd = new SqlCommand("updateStudent", conn);
             cmd.CommandType = CommandType.StoredProcedure;
 
             cmd.Parameters.AddWithValue("@Id", edit_stud_id.Trim());
-            cmd.Parameters.AddWithValue("@First_Name", update_stud_first_name.Trim());
-            cmd.Parameters.AddWithValue("@Last_Name", update_stud_last_name.Trim());
+            cmd.Parameters.AddWithValue("@FirstName", update_stud_first_name.Trim());
+            cmd.Parameters.AddWithValue("@LastName", update_stud_last_name.Trim());
             cmd.Parameters.AddWithValue("@Email", update_stud_email.Trim());
             cmd.Parameters.AddWithValue("@Class", update_stud_class.Trim());
             cmd.Parameters.AddWithValue("@Phone", update_stud_phone.Trim());
             cmd.Parameters.AddWithValue("@DOB", update_stud_dob.Trim());
             cmd.Parameters.AddWithValue("@Ethnicity", update_stud_ethnicity.Trim());
-            cmd.Parameters.AddWithValue("@Timetable", imgName.Trim());
 
             conn.Open();
             try
             {
+                StudentTimetable(update_stud_timetable, uploaded_stud_timetable, update_stud_first_name, update_stud_last_name, cmd);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
@@ -959,12 +957,12 @@ namespace Authn.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public IActionResult UpdateTeacherDetails(string edit_teach_id, string update_teach_first_name, string update_teach_last_name, string update_teach_email, string update_teach_class, IFormFile update_teach_timetable, string uploaded_teach_timetable)
+        public IActionResult UpdateTeacherDetails(string edit_teach_id, string update_teach_first_name, string update_teach_last_name, string update_teach_email, string update_teach_class)
         {
+            /*
             string imgName = uploaded_teach_timetable;
             if (update_teach_timetable != null)
             {
-                //string ext = System.IO.Path.GetExtension(update_timetable.FileName); //Gets the extension of the image uploaded
                 //Checks if there is already an existing gile
                 if (uploaded_teach_timetable != null)
                 {
@@ -985,7 +983,7 @@ namespace Authn.Controllers
                 {
                     update_teach_timetable.CopyTo(fileStream);
                 }
-            }
+            }*/
 
             SqlCommand cmd = new SqlCommand("updateTeacher", conn);
             cmd.Connection = conn;
@@ -997,7 +995,7 @@ namespace Authn.Controllers
             cmd.Parameters.AddWithValue("@Last_Name", update_teach_last_name.Trim());
             cmd.Parameters.AddWithValue("@Email", update_teach_email.Trim());
             cmd.Parameters.AddWithValue("@Class", update_teach_class.Trim());
-            cmd.Parameters.AddWithValue("@Timetable", imgName.Trim());
+            //cmd.Parameters.AddWithValue("@Timetable", imgName.Trim());
 
             conn.Open();
             cmd.ExecuteNonQuery();
@@ -1040,8 +1038,9 @@ namespace Authn.Controllers
 
         //Registers teacher into the database from the Admin Portal
         [Authorize(Roles = "Admin")]
-        public IActionResult RegisterTeacher(string teach_first_name, string teach_last_name, string teach_email, string teach_class, IFormFile teach_timetable)
+        public IActionResult RegisterTeacher(string teach_first_name, string teach_last_name, string teach_email, string teach_class)
         {
+            /*
             string imgName = DBNull.Value.ToString(); //Sets the default name of the image to null
             //Checks if a file was uploaded
             if (teach_timetable != null)
@@ -1059,7 +1058,7 @@ namespace Authn.Controllers
                 {
                     teach_timetable.CopyTo(fileStream);
                 }
-            }
+            }*/
 
             //Runs the SQL Procedure Command
             SqlCommand cmd = new SqlCommand("registerTeacher", conn); //Estabalishes connection to database and use the stored procedure
@@ -1069,7 +1068,7 @@ namespace Authn.Controllers
             cmd.Parameters.AddWithValue("@Last_Name", teach_last_name.Trim());
             cmd.Parameters.AddWithValue("@Email", teach_email.Trim());
             cmd.Parameters.AddWithValue("@Class", teach_class.Trim());
-            cmd.Parameters.AddWithValue("@Timetable", imgName.Trim()); //Saves the timetable name to the database
+            //cmd.Parameters.AddWithValue("@Timetable", imgName.Trim()); //Saves the timetable name to the database
 
             conn.Open(); //Open connection to database
             cmd.ExecuteNonQuery();
@@ -1090,7 +1089,7 @@ namespace Authn.Controllers
                 //Saves the image name as a combination of the teachers first name, last name and adds a guid in case teachers have the same names
                 imgName = stud_first_name + stud_last_name + "_" + Guid.NewGuid() + ext;
 
-                string saveLocation = "timetables/students/"; //Where the image will be stored
+                string saveLocation = "Timetables/Students/"; //Where the image will be stored
                 saveLocation += imgName; //Adds the image name to where the image will be saved
                 var dir = Path.Combine(_env.WebRootPath, saveLocation); //Sets the save location of the image
 
@@ -1104,6 +1103,7 @@ namespace Authn.Controllers
             //Runs the SQL Procedure Command
             SqlCommand cmd = new SqlCommand("registerStudent", conn);
             cmd.CommandType = CommandType.StoredProcedure;
+
             cmd.Parameters.AddWithValue("@First_Name", stud_first_name.Trim());
             cmd.Parameters.AddWithValue("@Last_Name", stud_last_name.Trim());
             cmd.Parameters.AddWithValue("@Email", stud_email.Trim());
@@ -1175,15 +1175,15 @@ namespace Authn.Controllers
 
             if (user == "Student")
             {
-                cmd.CommandText = "updateStudentPassword";
+                cmd.CommandText = "updatePasswordStudent";
             }
             else if (user == "Teacher")
             {
-                cmd.CommandText = "updateTeacherPassword";
+                cmd.CommandText = "updatePasswordTeacher";
             }
             else if (user == "Admin")
             {
-                cmd.CommandText = "updateAdminPassword";
+                cmd.CommandText = "updatePasswordAdmin";
             }
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Password", ConfirmNewPassword);
@@ -1203,15 +1203,15 @@ namespace Authn.Controllers
             SqlCommand cmd = new SqlCommand(null, conn);
             if (usertype == "Student")
             {
-                cmd.CommandText = "resetGetStudentEmail";
+                cmd.CommandText = "resetGetEmailStudent";
             }
             else if (usertype == "Teacher")
             {
-                cmd.CommandText =  "resetGetTeacherEmail";
+                cmd.CommandText =  "resetGetEmailTeacher";
             }
             else if (usertype == "Admin")
             {
-                cmd.CommandText =  "resetGetAdminEmail";
+                cmd.CommandText =  "resetGetEmailAdmin";
             }
             cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.AddWithValue("@Email", Email);
@@ -1226,7 +1226,7 @@ namespace Authn.Controllers
                 TempData["GuidID"] = GuidID;
 
                 string resetCode = Guid.NewGuid().ToString();
-                SqlCommand cmd1 = new SqlCommand("assign"+usertype+"ResetCode", conn);
+                SqlCommand cmd1 = new SqlCommand("assignResetCode"+usertype, conn);
                 cmd1.CommandType = CommandType.StoredProcedure;
 
                 cmd1.Parameters.AddWithValue("@Email", Email);
@@ -1245,6 +1245,7 @@ namespace Authn.Controllers
                     throw new Exception("Error: ", ex);
                 }
 
+                TempData["Success"] = "Success. An email has been sent.";
                 return RedirectToAction("ForgotPassword");
             }
             else
@@ -1259,21 +1260,30 @@ namespace Authn.Controllers
         {
             using (MailMessage mm = new MailMessage("ProjectileProtectionIV@gmail.com", Email))
             {
-                string link = "https://localhost:5001/Home/PasswordReset?user="+userType+"&guidcode=" + resetCode;
+                //string link = "https://localhost:5001/Home/PasswordReset?user="+userType+"&guidcode=" + resetCode;
+                string link = "https://studentmanagement-system.azurewebsites.net/Home/PasswordReset?user=" + userType+"&guidcode=" + resetCode;
                 mm.Subject = "Password Reset For Student Management Systems";
                 mm.Body = "You have requested a password reset for your Student Management Systems account\n"
                         + "Please click the link below to change your password:\n" +  link;
                 mm.BodyEncoding = Encoding.UTF8;
                 mm.IsBodyHtml = true;
 
+                /*
                 SmtpClient smtp = new SmtpClient();
+                smtp.UseDefaultCredentials = false;
                 NetworkCredential NetworkCred = new NetworkCredential("ProjectileProtectionIV@gmail.com", "H@rryP0tt3r");
                 smtp.Host = "smtp.gmail.com";
                 smtp.EnableSsl = true;
-                smtp.UseDefaultCredentials = false;
                 smtp.Credentials = NetworkCred;
                 smtp.Port = 587;
-                smtp.Send(mm);
+                smtp.Send(mm);*/
+
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new NetworkCredential("ProjectileProtectionIV@gmail.com", "H@rryP0tt3r");
+                    smtp.EnableSsl = true;
+                    smtp.Send(mm);
+                }
             }
         }
 
@@ -1311,7 +1321,6 @@ namespace Authn.Controllers
 
                     await HttpContext.SignInAsync(claimsPrincipal);
 
-                    /*return Redirect(returnUrl);*/
                     return RedirectToAction("Student");
                 }
             }
@@ -1342,7 +1351,6 @@ namespace Authn.Controllers
 
                     await HttpContext.SignInAsync(claimsPrincipal);
 
-                    /*return Redirect(returnUrl);*/
                     return RedirectToAction("Teacher");
                 }
             }
@@ -1374,7 +1382,6 @@ namespace Authn.Controllers
                     await HttpContext.SignInAsync(claimsPrincipal);
 
                     return Redirect(returnUrl);
-                    //return Redirect("~/Home/Privacy");
                 }
             }
 

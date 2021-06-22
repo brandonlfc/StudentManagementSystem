@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
+    <UserSecretsId>6f888a3a-1c20-4659-8795-ff98e78090cc</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -10,13 +11,19 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\assignments\Cloud Management\" />
-    <Folder Include="wwwroot\assignments\Information Systems\" />
-    <Folder Include="wwwroot\timetables\students\" />
-    <Folder Include="wwwroot\timetables\teachers\" />
+    <Folder Include="wwwroot\Assignments\Information Systems\" />
+    <Folder Include="wwwroot\Assignments\Cloud Management\" />
+    <Folder Include="wwwroot\Assignments\ITTS\" />
+    <Folder Include="wwwroot\Assignments\Systems Administration\" />
+    <Folder Include="wwwroot\Assignments\Software Development\" />
+    <Folder Include="wwwroot\Timetables\Students\" />
   </ItemGroup>
 
 </Project>

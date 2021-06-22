@@ -12,10 +12,10 @@ namespace Authn.Models
         public string First_Name { get; set; }
         public string Last_Name { get; set; }
         public string Email { get; set; }
-        public string Class { get; set; }
         public string Phone { get; set; }
         public DateTime DOB { get; set; }
         public string Ethnicity { get; set; }
+        public string Class { get; set; }
         public string Timetable { get; set; }
         public string Assignments { get; set; }
         public string SubmittedAssignments { get; set; }
@@ -28,7 +28,7 @@ namespace Authn.Models
         public string Last_Name { get; set; }
         public string Email { get; set; }
         public string Class { get; set; }
-        public string Timetable { get; set; }
+        //public string Timetable { get; set; }
     }
 
     public class Assignment
@@ -39,12 +39,12 @@ namespace Authn.Models
         public string Details { get; set; }
         public string Class { get; set; }
     }
-
+    /*
     public class TeacherTimetable
     {
         public int Id { get; set; }
         public string Image { get; set; }
-    }
+    }*/
 
     //List of all student assignments
     public class StudentsAssignments

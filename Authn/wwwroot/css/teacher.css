@@ -105,7 +105,7 @@ span {
 # Main Container Content
 --------------------------------------------------------------*/
 .main-container, .attendance-container, .attitude-container, .achievement-container, .grade-container {
-    margin-top: 50px;
+    margin-top: 150px;
     display: flex;
     justify-content: space-evenly;
     margin-bottom: 100px;
@@ -143,6 +143,16 @@ input[type="radio"] {
 
 .input {
     font-size: 13px;
+}
+
+.validation {
+    display: none;
+}
+
+.startdate, .enddate {
+    float: right;
+    font-size: 12px;
+    color: red;
 }
 
 .form-btn {
@@ -303,45 +313,6 @@ input[type="radio"] {
 
 
 
-
-
-
-
-/*.class-list td {
-    padding: 5px 0px 5px 0px;
-    border: none;
-    font-weight: 600;
-    font-size: 14px;
-}
-
-.class-list {
-    overflow-y: scroll;
-    scrollbar-width: none;
-    max-width: 700px;
-    min-height: 724px;
-}
-
-.table {
-    background: #fff;
-    max-height: 750px;
-}
-
-.class-list table {
-    width: 100%;
-    text-align: center;
-    border-collapse: collapse;
-}
-
-thead th {
-    text-align: center;
-}*/
-
-
-
-
-
-
-
 .panel-body {
     height: 750px;
 }
@@ -476,3 +447,106 @@ table.flex-table tr th {
     color: black;
     text-decoration: underline;
 }
+
+
+
+
+
+/*---------------------------------------------
+    MOBILE STYLING
+---------------------------------------------*/
+@media (max-width: 1429px) {
+    .main-container {
+        display: grid;
+    }
+
+    #container_two {
+        margin-top: 100px;
+    }
+
+    .list-container {
+        width: 550px;
+    }
+
+    .justify-content-between {
+        justify-content: space-between;
+    }
+
+    .page-title {
+        margin-left: 0 !important;
+    }
+
+    .stats {
+        padding: 10px 20px;
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 414px) {
+    .list-container, .create-container {
+        width: 400px;
+    }
+
+    .assignment-details {
+        min-width: 300px;
+    }
+
+    .buttons {
+        margin-top: 290px;
+    }
+
+    html {
+        overflow-x: hidden;
+    }
+
+    .list-container {
+        height: 664px;
+    }
+    .panel-body {
+        height: 615px;
+    }
+
+    table.flex-table thead {
+        font-size: 10px;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0;
+    }
+
+    table.flex-table {
+        height: 615px;
+    }
+
+    table.flex-table tbody {
+        font-size: 10px;
+    }
+
+    .user-type a {
+        font-size: 16px;
+    }
+
+    .user-type li {
+        min-width: 80px;
+        font-size: 12px;
+    }
+
+
+    .create-container form {
+        font-size: 12px;
+    }
+
+    .create-container .input {
+        width: 125px;
+        height: 25px;
+    }
+
+    #form_title {
+        margin-left: 30px;
+    }
+
+    #container_two, #container_two {
+        height: 615px;
+    }
+}
+/*-------------------------------------------*/

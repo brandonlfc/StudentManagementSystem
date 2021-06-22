@@ -2,34 +2,33 @@
 @{
     Layout = "";
 
-    float atten = 0;
-    int i = 0;
+    float attendance = 0, achievement = 0, attitude = 0;
+    int attendanceCount = 0, achievementCount = 0, attitudeCount = 0;
+
     foreach (StatsAttendance item in Model.Attendance)
     {
-        atten += item.Attendance;
-        i++;
+        attendance += item.Attendance;
+        attendanceCount++;
     }
-    float attendanceTotal = ((atten / i) / 240) * 100;
-    string AttendanceText = String.Format("Attendance - {0:0.0}%", attendanceTotal);
 
-    float attit = 0;
-    int e = 0;
     foreach (StatsAttitude item in Model.Attitude)
     {
-        attit += item.Attitude;
-        e++;
+        attitude += item.Attitude;
+        attitudeCount++;
     }
-    float attitudeTotal = attit / e;
-    string AttitudeText = String.Format("Attitude - {0:0.0}%", attitudeTotal);
 
-    float achievement = 0;
-    int o = 0;
     foreach(StatsAchievement item in Model.Achievement)
     {
         achievement += item.Achievement;
-        o++;
+        achievementCount++;
     }
-    float achievementTotal = achievement / o;
+    float attendanceTotal = ((attendance / attendanceCount) / 240) * 100;
+    string AttendanceText = String.Format("Attendance - {0:0.0}%", attendanceTotal);
+
+    float attitudeTotal = attitude / attitudeCount;
+    string AttitudeText = String.Format("Attitude - {0:0.0}%", attitudeTotal);
+
+    float achievementTotal = achievement / achievementCount;
     string AchievementText = String.Format("Achievement - {0:0.0}%", achievementTotal);
 }
 <!DOCTYPE html>
@@ -48,7 +47,13 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Roboto:100,300,400,500,700|Philosopher:400,400i,700,700i" rel="stylesheet">
 
         <!-- Vendor CSS Files -->
-        <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+            <link href="~/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Vendor CSS Files -->
+        <link href="~/assets/vendor/aos/aos.css" rel="stylesheet">
+        <link href="~/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+        <link href="~/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+        <link href="~/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
         <!-- Template Main CSS File -->
         <link href="~/css/student.css" rel="stylesheet">
@@ -76,14 +81,12 @@
                 <nav id="navbar" class="navbar">
                     <ul>
                         <li><a class="nav-link" href="/">Home</a></li>
-                        <li><a class="nav-link" asp-action="Logout">Logout</a></li>
-                        <div class="stats">
-                            <ul>
-                                <li><a>@AttendanceText</a></li>
-                                <li><a>@AttitudeText</a></li>
-                                <li><a>@AchievementText</a></li>
-                            </ul>
-                        </div>
+                        <li><a class="nav-link" asp-area="" asp-controller="Home"  asp-action="Logout">Logout</a></li>
+                        <li class="stats">
+                            <a>@AttendanceText</a>
+                            <a>@AttitudeText</a>
+                            <a>@AchievementText</a>
+                        </li>
                     </ul>
                     <i class="bi bi-list mobile-nav-toggle"></i>
                 </nav><!-- .navbar -->
@@ -102,7 +105,7 @@
                         <div id="timetable_display" class="modal" style="display: none;">
                             <div class="modal-content">
                                 <span class="close" onclick="hideTimetable()">&times;</span>
-                                <img class="img" src="@Url.Content("~/timetables/students/" + student.Timetable)" />
+                                <img class="img" src="@Url.Content("~/Timetables/Students/" + student.Timetable)" />
                             </div>
                         </div>
                     }
@@ -202,12 +205,12 @@
                     </ul>
                 </div>
                 <form id="student_form" enctype="multipart/form-data" method="post">
-                    Assignment ID: <input class="input" id="edit_ass_id" type="text" name="edit_ass_id" readonly/><br /><br />
-                    Start Date: <input class="input" id="edit_ass_start" type="text" name="edit_ass_start" readonly/><br /><br />
-                    End Date: <input class="input" id="edit_ass_end" type="text" name="edit_ass_end"  readonly /><br /><br />
+                    Assignment ID: <input class="input" id="edit_ass_id" type="text" name="edit_ass_id" readonly /><br /><br />
+                    Start Date: <input class="input" id="edit_ass_start" type="text" name="edit_ass_start" readonly /><br /><br />
+                    End Date: <input class="input" id="edit_ass_end" type="text" name="edit_ass_end" readonly /><br /><br />
                     Details: <textarea class="input assignment-details" id="edit_ass_details" type="text" readonly></textarea><br /><br />
                     <div class="upload_file">
-                        Upload File: <input class="input" id="upload_file" name="fileUpload" type="file" required/><br /><br />
+                        Upload File: <input class="input" id="upload_file" name="fileUpload" type="file" required /><br /><br />
                     </div>
                     <div class="buttons">
                         <input class="form-btn" type="submit" asp-action="SubmitAssignment" value="Submit Assignment" />
@@ -224,70 +227,51 @@
 
                     <div class="col-md-12 col-lg-4">
                         <div class="footer-logo">
-
-                            <a class="navbar-brand" href="#">WhippedMS</a>
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the.</p>
-
+                            <a class="navbar-brand" scrollto="#hero" href="#">WhippedMS</a>
+                            <p>Started in 2021, Whipped Management Systems has rocketed to being one of the top most used Management Systems used by schools. With the numbers continously growing we can assure you that our product is quality.</p>
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3 col-lg-2">
                         <div class="list-menu">
-
                             <h4>About Us</h4>
-
                             <ul class="list-unstyled">
                                 <li><a href="#">About us</a></li>
-                                <li><a href="#">Features item</a></li>
-                                <li><a href="#">Live streaming</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Tripple A's</a></li>
+                                <li><a href="#">Our schools</a></li>
                             </ul>
-
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3 col-lg-2">
                         <div class="list-menu">
-
-                            <h4>Support</h4>
-
+                            <h4>Portal</h4>
                             <ul class="list-unstyled">
-                                <li><a href="#">About us</a></li>
-                                <li><a href="#">Features item</a></li>
-                                <li><a href="#">Live streaming</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a asp-controller="Home" asp-action="Secured">Login</a></li>
+                                <li><a asp-controller="Home" asp-action="ForgotPassword">Forgott Password</a></li>
                             </ul>
-
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3 col-lg-2">
                         <div class="list-menu">
-
                             <h4>Contact</h4>
-
                             <ul class="list-unstyled">
-                                <li><a href="#">faq</a></li>
-                                <li><a href="#">Editor help</a></li>
-                                <li><a href="#">Contact us</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Text Us</a></li>
+                                <li><a href="#">Call Us</a></li>
+                                <li><a class="scrollto" href="#contact">Email Us</a></li>
                             </ul>
-
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3 col-lg-2">
                         <div class="list-menu">
-
                             <h4>FAQs</h4>
-
                             <ul class="list-unstyled">
-                                <li><a href="#">About us</a></li>
-                                <li><a href="#">Features item</a></li>
-                                <li><a href="#">Live streaming</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Pricing</a></li>
+                                <li><a href="#">Feautures</a></li>
+                                <li><a href="#">Accesability</a></li>
                             </ul>
-
                         </div>
                     </div>
 
@@ -295,5 +279,6 @@
             </div>
         </footer><!-- End  Footer -->
         <script src="~/js/student.js"></script>
+        <script src="~/assets/js/main-secured.js"></script>
     </body>
 </html>

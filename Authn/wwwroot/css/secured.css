@@ -131,6 +131,10 @@ form {
     margin-top: 50px;
 }
 
+.form-text {
+    margin-left: 75px;
+}
+
 input[type="radio"] {
     transform: scale(1.5);
     float: right;
@@ -185,6 +189,7 @@ input[type="radio"] {
     line-height: 50px; /*Set to same height as .user-type to set text to center*/
 }
 
+/*Box Shadows for Create/Edit Forms depending on the user*/
 .student {
     box-shadow: 0 3px 10px rgba(183, 220, 244, 0.3),
                 0 3px 30px rgba(183, 220, 244, 0.3),
@@ -224,16 +229,6 @@ input[type="radio"] {
     max-width: 700px;
     min-height: 724px;
 }
-/*
-.table {
-    background: #fff;
-    max-height: 470px;
-    overflow-y: scroll;
-    box-shadow: 0px 10px 50px 0px rgba(0,0,0,0.5);
-    border-radius: 10px;
-}
-
-*/
 
 .registered-list /*table*/ {
     width: 100%;
@@ -241,18 +236,7 @@ input[type="radio"] {
     border-collapse: collapse;
 }
 
-/*
-thead th {
-    text-align: center;
-}
-
-*/
-
-
-
-
-
-
+/*Styling for table display*/
 .flex-id {
     flex: 1 !important;
 }
@@ -342,8 +326,6 @@ table.flex-table tr th {
     text-align: center;
 }
 
-
-
 /*---------------------------------------------
     MOBILE STYLING
 ---------------------------------------------*/
@@ -364,3 +346,60 @@ table.flex-table tr th {
         margin-left: 0 !important;
     }
 }
+
+@media (max-width: 414px) {
+    .registered-container, .create-container {
+        width: auto;
+    }
+
+    .registered-container {
+        height: 664px;
+    }
+    .panel-body {
+        height: 615px;
+    }
+
+    table.flex-table thead {
+        font-size: 10px;
+    }
+
+    .table > :not(caption) > * > * {
+        padding: 0;
+    }
+
+    table.flex-table {
+        height: 615px;
+    }
+
+    table.flex-table tbody {
+        font-size: 10px;
+    }
+
+    .user-type a {
+        font-size: 16px;
+    }
+
+    .user-type li {
+        min-width: 80px;
+        font-size: 12px;
+    }
+
+
+    .create-container form {
+        font-size: 12px;
+    }
+
+    .create-container .input {
+        width: 125px;
+        height: 25px;
+    }
+
+    #form_title {
+        margin-left: 30px;
+    }
+
+    #container_two, #container_two {
+        height: 615px;
+    }
+}
+/*-------------------------------------------*/

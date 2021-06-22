@@ -125,7 +125,7 @@ function editStudent(ID, FirstName, LastName, Email, Class, Phone, DOB, Ethnicit
 		var fixedDOB = aDOB.split('/').reverse().join('-'); //reverses date to yyyy/mm/ddd
 	} else {
 		var fixedDOB = splitDOB.split('/').reverse().join('-');
-    }
+	}
 
 	//INPUT VALUES INTO FORM TO BE EDITED
 	editStudID.value = ID;

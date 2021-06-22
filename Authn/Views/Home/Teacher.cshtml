@@ -63,24 +63,6 @@
             </div>
         </header><!-- End Header -->
         <div class="main" id="main">
-            @{
-                if (Model != null)
-                {
-                    foreach (Teacher teacher in Model.Teachers)
-                    {
-                        <div class="button-timetable" id="timetable_button" onclick="showTimetable()">
-                            <a>Timetable</a>
-                        </div>
-                        <div id="timetable_display" class="modal" style="display: none;">
-                            <div class="modal-content">
-                                <span class="close" onclick="hideTimetable()">&times;</span>
-                                <img class="img" src="@Url.Content("~/timetables/teachers/" + @teacher.Timetable)" />
-                            </div>
-                        </div>
-                    }
-                }
-            }
-        </div>
         <div class="main-container" id="main-container">
             <div class="list-container students" id="container_one">
                 <div class="user-type">
@@ -123,6 +105,7 @@
                     </div>
                 </div>
             </div>
+            <!--CREATE ASSIGNMENT FORM-->
             <div class="create-container create-assignment" id="container_two">
                 <div class="user-type">
                     <ul>
@@ -133,12 +116,14 @@
                 </div>
                 <form id="create_form">
                     Class: <input class="input" name="displayClass" placeholder="@{ foreach (Teacher teacher in Model.Teachers) { @teacher.Class} }" readonly /><br /><br />
-                    Start Date: <input class="input" type="date" name="createStartDate" placeholder="Start Date" required /><br /><br />
-                    End Date: <input class="input" type="date" name="createEndDate" placeholder="End Date" required /><br /><br />
-                    Details: <textarea class="input assignment-details" name="createDetails" placeholder="Enter assignment details"></textarea><br /><br />
+                    Start Date: <input class="input" id="startDate" onchange="checkDate()" type="date" name="createStartDate" placeholder="Start Date" required />
+                    <div class="startdate validation" id="startValidation">Must be present or future date </div><br /><br />
+                    End Date: <input class="input" id="endDate" onchange="checkDate()" type="date" name="createEndDate" placeholder="End Date" required />
+                    <div class="enddate validation" id="endValidation" style="float: right; font-size: 12px;">Must be greater than start date </div><br /><br />
+                    Details: <textarea class="input assignment-details" name="createDetails" placeholder="Enter assignment details" required></textarea><br /><br />
                     <div class="buttons">
-                        <input class="form-btn" type="submit" asp-action="CreateAssignment" value="Create" />
-                        <input class="form-btn" type="reset" value="Reset" />
+                        <input class="form-btn" id="submitButton" type="submit" asp-action="CreateAssignment" value="Create" />
+                        <input class="form-btn" onclick="resetValidation()" type="reset" value="Reset" />
                     </div>
                 </form>
                 <div class="row" id="list_assignment" style="display: none;">
@@ -364,6 +349,7 @@
                 </form>
             </div>
         </div>
+        </div>
 
         <!-- End #main -->
         <!-- ======= Footer ======= -->
@@ -373,70 +359,51 @@
 
                     <div class="col-md-12 col-lg-4">
                         <div class="footer-logo">
-
-                            <a class="navbar-brand" href="#">WhippedMS</a>
-                            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the.</p>
-
+                            <a class="navbar-brand" scrollto="#hero" href="#">WhippedMS</a>
+                            <p>Started in 2021, Whipped Management Systems has rocketed to being one of the top most used Management Systems used by schools. With the numbers continously growing we can assure you that our product is quality.</p>
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3 col-lg-2">
                         <div class="list-menu">
-
                             <h4>About Us</h4>
-
                             <ul class="list-unstyled">
                                 <li><a href="#">About us</a></li>
-                                <li><a href="#">Features item</a></li>
-                                <li><a href="#">Live streaming</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Tripple A's</a></li>
+                                <li><a href="#">Our schools</a></li>
                             </ul>
-
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3 col-lg-2">
                         <div class="list-menu">
-
-                            <h4>Support</h4>
-
+                            <h4>Portal</h4>
                             <ul class="list-unstyled">
-                                <li><a href="#">About us</a></li>
-                                <li><a href="#">Features item</a></li>
-                                <li><a href="#">Live streaming</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a asp-controller="Home" asp-action="Secured">Login</a></li>
+                                <li><a asp-controller="Home" asp-action="ForgotPassword">Forgott Password</a></li>
                             </ul>
-
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3 col-lg-2">
                         <div class="list-menu">
-
                             <h4>Contact</h4>
-
                             <ul class="list-unstyled">
-                                <li><a href="#">faq</a></li>
-                                <li><a href="#">Editor help</a></li>
-                                <li><a href="#">Contact us</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Text Us</a></li>
+                                <li><a href="#">Call Us</a></li>
+                                <li><a class="scrollto" href="#contact">Email Us</a></li>
                             </ul>
-
                         </div>
                     </div>
 
                     <div class="col-sm-6 col-md-3 col-lg-2">
                         <div class="list-menu">
-
                             <h4>FAQs</h4>
-
                             <ul class="list-unstyled">
-                                <li><a href="#">About us</a></li>
-                                <li><a href="#">Features item</a></li>
-                                <li><a href="#">Live streaming</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
+                                <li><a href="#">Pricing</a></li>
+                                <li><a href="#">Feautures</a></li>
+                                <li><a href="#">Accesability</a></li>
                             </ul>
-
                         </div>
                     </div>
 
